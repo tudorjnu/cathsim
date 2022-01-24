@@ -1,0 +1,43 @@
+<mujoco>
+	<compiler angle="degree" meshdir="meshes"/>
+	<asset>
+		<mesh file="slave/cylinder/cylinder_hull_1.stl"/>
+		<mesh file="slave/cylinder/cylinder_hull_2.stl"/>
+		<mesh file="slave/cylinder/cylinder_hull_3.stl"/>
+		<mesh file="slave/cylinder/cylinder_hull_4.stl"/>
+		<mesh file="slave/cylinder/cylinder_hull_5.stl"/>
+		<mesh file="slave/cylinder/cylinder_hull_6.stl"/>
+		<mesh file="slave/cylinder/cylinder_hull_7.stl"/>
+		<mesh file="slave/cylinder/cylinder_hull_8.stl"/>
+		<mesh file="slave/cylinder/cylinder_hull_9.stl"/>
+		<mesh file="slave/cylinder/cylinder_hull_10.stl"/>
+		<mesh file="slave/cylinder/cylinder_hull_11.stl"/>
+		<mesh file="slave/cylinder/cylinder_hull_12.stl"/>
+		<mesh file="slave/cylinder/cylinder_hull_13.stl"/>
+		<mesh file="slave/cylinder/cylinder_hull_14.stl"/>
+		<mesh file="slave/cylinder/cylinder_hull_15.stl"/>
+		<mesh file="slave/cylinder/cylinder_hull_16.stl"/>
+		<mesh file="slave/cylinder/cylinder.stl"/>
+	</asset>
+	<worldbody>
+		<body name="cylinder">
+			<!-- <geom type="mesh" mesh="cylinder" rgba=".99 .15 .15 .1" group="0" contype="0" conaffinity="0"/> -->
+			<geom name="c_1" type="mesh" mesh="cylinder_hull_1" rgba=".99 .15 .15 0" group="0" condim="1"/>
+			<geom name="c_2" type="mesh" mesh="cylinder_hull_2" rgba=".99 .15 .15 0" group="0" condim="1"/>
+			<geom name="c_3" type="mesh" mesh="cylinder_hull_3" rgba=".99 .15 .15 0" group="0" condim="1"/>
+			<geom name="c_t" type="mesh" mesh="cylinder_hull_4" rgba=".99 .15 .15 0" group="0" condim="1"/>
+			<geom name="c_5" type="mesh" mesh="cylinder_hull_5" rgba=".99 .15 .15 0" group="0" condim="1"/>
+			<geom name="c_6" type="mesh" mesh="cylinder_hull_6" rgba=".99 .15 .15 0" group="0" condim="1"/>
+			<geom name="c_7" type="mesh" mesh="cylinder_hull_7" rgba=".99 .15 .15 0" group="0" condim="1"/>
+			<geom name="c_8" type="mesh" mesh="cylinder_hull_8" rgba=".99 .15 .15 0" group="0" condim="1"/>
+			<geom name="c_9" type="mesh" mesh="cylinder_hull_9" rgba=".99 .15 .15 0" group="0" condim="1"/>
+			<geom name="c_10" type="mesh" mesh="cylinder_hull_10" rgba=".99 .15 .15 0" group="0" condim="1"/>
+			<geom name="c_11" type="mesh" mesh="cylinder_hull_11" rgba=".99 .15 .15 0" group="0" condim="1"/>
+			<geom name="c_12" type="mesh" mesh="cylinder_hull_12" rgba=".99 .15 .15 0" group="0" condim="1"/>
+			<geom name="c_13" type="mesh" mesh="cylinder_hull_13" rgba=".99 .15 .15 0" group="0" condim="1"/>
+			<geom name="c_14" type="mesh" mesh="cylinder_hull_14" rgba=".99 .15 .15 0" group="0" condim="1"/>
+			<geom name="c_15" type="mesh" mesh="cylinder_hull_15" rgba=".99 .15 .15 0" group="0" condim="1"/>
+			<geom name="c_16" type="mesh" mesh="cylinder_hull_16" rgba=".99 .15 .15 0" group="0" condim="1"/>
+		</body>
+	</worldbody>
+</mujoco>
