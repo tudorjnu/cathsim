@@ -1,4 +1,5 @@
 import mujoco_env
+import gym
 from gym import utils
 import os
 import numpy as np
@@ -12,26 +13,32 @@ class CatheterEnv(mujoco_env.MujocoEnv, utils.EzPickle):
     collisions = []  # [frame, collision_pos, collision_force]
 
     def __init__(self):
+        """ Inherits from MujocoEnv """
         mujoco_env.MujocoEnv.__init__(self, xml_path, 4)
         utils.EzPickle.__init__(self)
 
     def step(self, a):
         ctrl_cost_coeff = 0.0001
-        ctrl_force_coeff = 0.0001
+        # ctrl_force_coeff = 0.0001
         self.do_simulation(a, self.frame_skip)
-        reward_ctrl = -ctrl_cost_coeff * np.square(a).sum()
-        reward_distance = - self.get_target_distance()
-        reward_force = - ctrl_force_coeff * self.get_collision_force()
-        reward = reward_ctrl + reward_distance + reward_force
         ob = self._get_obs()
-        return ob, reward, False, dict(reward_distance=reward_distance,
-                                       reward_force=reward_force,
-                                       reward_ctrl=reward_ctrl)
+        # calculate the reward
+        reward_ctrl = -ctrl_cost_coeff * np.square(a).sum()
+        reward_distance = self.get_target_distance()
+        # reward_force = - ctrl_force_coeff * self.get_collision_force()
+        reward = reward_ctrl - reward_distance - 1
+        done = bool(reward_distance <= 0.0001)
+        return ob, reward, done, dict(reward_distance=reward_distance)
 
     def _get_obs(self):
-        qpos = self.sim.data.qpos
-        qvel = self.sim.data.qvel
-        return np.concatenate([qpos.flat, qvel.flat])
+        # qpos = self.sim.data.qpos
+        # qvel = self.sim.data.qvel
+        top_view = self.render(mode="rgb_array", height=256, width=256,
+                               camera_id=0)
+        # side_view = self.render(mode="rgb_array", height=256, width=256,
+                                # camera_id=2)
+        # return np.concatenate([top_view, side_view], axis=-1)
+        return top_view
 
     def reset_model(self):
         self.set_state(
@@ -80,17 +87,43 @@ class CatheterEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
 
 env = CatheterEnv()
-observation = env.reset()
-start = 1
-print("Degrees of Freedom:", env.sim.model.nv)
-for frame in range(start + 1000):
-    env.render()
-    # env.get_collision_force(frame)
-    action = env.action_space.sample()  # your agent here (this takes random actions)
-    # print(action.shape)
-    action[0] = .01
-    # action[1] = .9
-    observation, reward, done, info = env.step(action)
-    print(reward)
+# env = gym.make("MountainCarContinuous-v0")
+# Box(4,) means that it is a Vector with 4 components
+print("Observation space:", env.observation_space)
+print("Shape:", env.observation_space.shape)
+# Discrete(2) means that there is two discrete actions
+print("Action space:", env.action_space)
 
-env.close()
+# The reset method is called at the beginning of an episode
+obs = env.reset()
+# Sample a random action
+action = env.action_space.sample()
+print("Sampled action:", action)
+obs, reward, done, info = env.step(action)
+# Note the obs is a numpy array
+# info is an empty dict for now but can contain any debugging info
+# reward is a scalar
+print(obs.shape, reward, done, info)
+
+
+# observation = env.reset()
+# start = 1
+# print("Degrees of Freedom:", env.sim.model.nv)
+# for frame in range(start + 1000):
+# env.render()
+# # env._get_viewer('rgb_array').read_pixels(
+# # 256, 256, depth=False)
+# # original image is upside-down, so flip it
+# # return data[::-1, :, :]
+
+# # top_camera = env.render(
+# # "rgb_array", width=256, height=256, camera_name='top_view')
+# # env.get_collision_force(frame)
+# action = env.action_space.sample()  # your agent here (this takes random actions)
+# # print(action.shape)
+# action[0] = .01
+# # action[1] = .9
+# observation, reward, done, info = env.step(action)
+# print(reward)
+
+# env.close()
