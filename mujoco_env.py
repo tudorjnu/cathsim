@@ -17,7 +17,7 @@ except ImportError as e:
         )
     )
 
-DEFAULT_SIZE = 500
+DEFAULT_SIZE = 256
 
 
 def convert_observation_to_space(observation):

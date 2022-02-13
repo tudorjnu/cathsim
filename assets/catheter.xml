@@ -1,20 +1,21 @@
 <mujoco>
   <!-- <include file="cylinder.xml"/> -->
   <option gravity="0 0 -1"/>
+  
   <worldbody>
-    <body name="B0" pos="0.0076103 -1.24447 1.07725" euler="0 0 90">
-      <joint name="slider_joint" pos="0 0 0" axis="1 0 0" type="slide" limited="true" range="-2 2"/>
-      <joint name="twister_joint" pos="-0.02 0 0" axis="1 0 0" armature=".1"/>
-      <composite type="rope" count="100 1 1" spacing="0.0068" offset="0 0 2">
-        <joint kind="main" damping="0.005" armature="0.9" stiffness="0.001"/>
-        <joint kind="twist" damping="0.005" armature="0.005"/>
+    <body name="B0" pos="0.0076103 -0.88447 1.07725" euler="0 0 90">
+      <joint name="slider_joint" pos="0 0 0" axis="1 0 0" type="slide" limited="true" range="0 2"/>
+      <!-- <joint name="twister_joint" pos="-0.02 0 0" axis="1 0 0" armature=".5"/> -->
+      <composite type="rope" count="100 1 1" spacing="0.0069" offset="0 0 2">
+        <joint kind="main" damping="0.005" armature="0.51" stiffness="0.00001"/>
+        <!-- <joint kind="twist" damping="0.005" armature="0.005"/> -->
         <geom type="capsule" size=".0018 .003" rgba="0.2 0.2 0.2 1" group="1"/>
       </composite>
     </body>
   </worldbody>
   <actuator>
-    <motor name="slider_motor" joint="slider_joint" ctrlrange="-1 1" ctrllimited="true" forcelimited="true" forcerange="-0.001 0.001"/>
-    <motor name="twister_motor" joint="twister_joint" ctrlrange="-1 1" ctrllimited="true" forcelimited="true" forcerange="-0.001 0.001"/>
+    <motor name="slider_motor" joint="slider_joint" ctrlrange="-1 1" ctrllimited="true" forcelimited="true" forcerange="-0.025 0.025"/>
+    <!-- <motor name="twister_motor" joint="twister_joint" ctrlrange="-1 1" ctrllimited="true" forcelimited="true" forcerange="-0.025 0.025"/> -->
   </actuator>
 
 </mujoco>

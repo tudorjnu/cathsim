@@ -2055,7 +2055,7 @@
 	<worldbody>
 		<body name="Phantom">
 			<freejoint/>
-		  <geom type="mesh" mesh="box" rgba=".85 .85 .85 0.3" contype="0" conaffinity="0"/>
+		    <geom type="mesh" mesh="box" rgba=".85 .85 .85 0.3" contype="0" conaffinity="0"/>
 			<geom type="mesh" mesh="Phantom_2" rgba=".99 .15 .15 0.3" contype="0" conaffinity="0"/>
 			<geom type="mesh" mesh="Phantom_2_hull_1" rgba=".99 .15 .15 0" group="0" priority="1"/>
 			<geom type="mesh" mesh="Phantom_2_hull_2" rgba=".99 .15 .15 0" group="0" priority="1"/>

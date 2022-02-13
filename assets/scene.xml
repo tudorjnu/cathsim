@@ -1,13 +1,13 @@
 <mujoco>
 	<include file="phantom.xml"/>
-	<!-- <include file="mjmodel.xml"/> -->
-	<include file="catheter.xml"/>
-	<include file="cylinder.xml"/>
-	<include file="slave.xml"/>
+	<include file="mjmodel.xml"/> 
+	<!--<include file="catheter.xml"/>-->
+	 <!--<include file="cylinder.xml"/> -->
+	<!--<include file="slave.xml"/> -->
 	<size njmax="2000" nconmax="500"/>
 	<compiler meshdir="meshes" texturedir="textures" angle="degree"/>
 	<option gravity="0 0 0"/>
-	<!-- <option viscosity="4.5" timestep="0.002"/> -->
+	 <option timestep="0.0001"/> 
 	<asset>
 		<texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="512"/>
 		<texture name="texplane" type="2d" builtin="checker" rgb1="0.9098039216 0.9294117647 0.9333333333" rgb2="0.4627450980 0.5254901961 0.5725490196" width="512" height="512" mark="cross" markrgb=".8 .8 .8"/>
@@ -58,6 +58,8 @@
 		<mesh file="scene/rfi/platform_support_001.stl"/>
 		<mesh file="scene/rfi/scanners.stl"/>
 		<mesh file="scene/rfi/support_arch.stl"/>
+		<mesh file="scene/box.stl"/>
+		<!--<mesh file="scene/target_bca.stl"/>-->
 	</asset>
 	<default>
 		<default class="scene">
@@ -65,14 +67,16 @@
 		</default>
 	</default>
 	<worldbody>
+		<site name="target_bca" rgba="0.25, 0.5, 0.96 0.7" size="0.005 0.005 0.005" pos="-0.029918 0.055143 1.0431"/>
 		<geom name="floor" pos="0 0 -.22" size="0 0 .25" type="plane" material="matplane" condim="3"/>
 		<light directional="true" diffuse=".2 .2 .2" specular="0 0 0" pos="0 0 5" dir="0 0 -1" castshadow="false"/>
 		<light directional="false" diffuse=".8 .8 .8" specular="0.3 0.3 0.3" pos="0 0 4.0" dir="0 0 -1" castshadow="false"/>
 
-		<camera name="top_view" pos=".0077375 .067528 1.382" euler="0 0 0"/>
+		<camera name="top_view" pos="0.007738 -0.029034 1.550" euler="0 0 0"/>
 		<camera name="room_view" pos="-3.3639 -6.1446 1.8245" quat="0.723 0.635 -0.179 -0.203"/>
-		<camera name="side_view" pos="-.6809 .0042968 1.0705" quat="0.707 0 -0.707 0."/>
+		<camera name="side_view" pos="-.6809 .0042968 1.0705" quat="0.5 0.5 -0.5 -0.5"/>
 
+		<geom type="mesh" mesh="box" rgba=".85 .85 .85 0.3" contype="0" conaffinity="0"/>
 		<geom class="scene" mesh="walls" material="white"/>
 		<geom class="scene" mesh="cable_computer" material="black"/>
 		<geom class="scene" mesh="keyboard" material="dark_grey"/>
