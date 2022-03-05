@@ -1,0 +1,178 @@
+<mujoco>
+	<compiler meshdir="meshes" angle="degree"/>
+	<asset>
+		<!-- main body -->
+		<mesh file="slave/base.stl"/>
+		<mesh file="slave/main_rail.stl"/>
+		<mesh file="slave/support_back.stl"/>
+		<mesh file="slave/support_front.stl"/>
+		<mesh file="slave/support_front_nose.stl"/>
+		<mesh file="slave/support_left.stl"/>
+		<mesh file="slave/support_right.stl"/>
+		<!-- slider_front -->
+		<mesh file="slave/slider_front_body.stl"/>
+		<mesh file="slave/slider_front_clamp_left.stl"/>
+		<mesh file="slave/slider_front_clamp_right.stl"/>
+		<!-- slider_middle -->
+		<mesh file="slave/slider_middle_body.stl"/>
+		<mesh file="slave/slider_middle_wheel_lower.stl"/>
+		<mesh file="slave/slider_middle_wheel_upper.stl"/>
+		<!-- slider_upper -->
+		<mesh file="slave/rail_upper.stl"/>
+		<mesh file="slave/rail_upper_support.stl"/>
+		<mesh file="slave/slider_upper_body.stl"/>
+		<mesh file="slave/slider_upper_clamp_left.stl"/>
+		<mesh file="slave/slider_upper_clamp_right.stl"/>
+		<!-- slider_rear -->
+		<mesh file="slave/slider_rear_body.stl"/>
+		<mesh file="slave/slider_rear_wheel_lower.stl"/>
+		<mesh file="slave/slider_rear_wheel_upper.stl"/>
+
+
+		<!-- colours -->
+		<material name="dark_blue" rgba="0.21176470588235294 0.27450980392156865 0.3215686274509804 1"/>
+		<material name="yellow" rgba="0.9686274509803922 0.9254901960784314 0.34901960784313724 1"/>
+		<material name="orange" rgba="0.9137254901960784 0.30980392156862746 0.21568627450980393 1"/>
+		<material name="red" rgba="0.4196078431372549 0.058823529411764705 0.10196078431372549 1"/>
+		<material name="silver" rgba="0.6745098039215687 0.6745098039215687 0.6745098039215687 1"/>
+
+
+		<material name="sns-blue" rgba="0.29803922 0.44705882 0.69019608 1"/>
+		<material name="sns-orange" rgba="0.86666667 0.51764706 0.32156863 1"/>
+		<material name="sns-green" rgba="0.33333333 0.65882353 0.40784314 1"/>
+		<material name="sns-red" rgba="0.76862745 0.30588235 0.32156863 1"/>
+		<material name="sns-purple" rgba="0.50588235 0.44705882 0.70196078 1"/>
+		<material name="sns-brown" rgba="0.57647059 0.47058824 0.37647059 1"/>
+		<material name="sns-pink" rgba="0.85490196 0.54509804 0.76470588 1"/>
+		<material name="sns-grey" rgba="0.54901961 0.54901961 0.54901961 1"/>
+		<material name="sns-gold" rgba="0.8        0.7254902  0.45490196 1"/>
+		<material name="sns-light-blue" rgba="0.39215686 0.70980392 0.80392157 1"/>
+
+	</asset>
+	<default class="main">
+		<default class="primary">
+			<geom type="mesh" material="sns-blue" contype="0" conaffinity="0"/>
+		</default>
+		<default class="secondary">
+			<geom type="mesh" material="sns-green" contype="0" conaffinity="0"/>
+		</default>
+		<default class="slider">
+			<joint axis="0 1 0" limited="true" damping="1" armature="0" type="slide"/>
+			<motor ctrlrange="-1. 1." ctrllimited="true"/>
+			<geom type="mesh" material="sns-purple" contype="0" conaffinity="0"/>
+		</default>
+		<default class="clamp">
+			<joint type="slide" axis="1 0 0" range="0 0.003921" limited="true" damping="1" armature="0"/>
+			<motor ctrlrange="-1. 1." ctrllimited="true"/>
+			<geom type="mesh" material="sns-orange" contype="0" conaffinity="0"/>
+		</default>
+		<default class="wheel_up">
+			<joint type="hinge" axis="0 -1 0" limited="false"/>
+			<motor ctrlrange="-1. 1." ctrllimited="true"/>
+			<geom type="mesh" material="sns-grey" contype="0" conaffinity="0"/>
+		</default>
+		<default class="wheel_low" >
+			<joint type="hinge" axis="0 1 0" limited="false" />
+			<motor ctrlrange="-1. 1." ctrllimited="true"/>
+			<geom type="mesh" material="sns-grey" contype="0" conaffinity="0"/>
+		</default>
+	</default>
+	<worldbody>
+		<body name="slave"> 
+			<geom type="mesh" mesh="base" class="primary"/>
+			<body name="main_rail_body">
+				<geom mesh="support_back" class="primary"/>
+				<geom mesh="support_front" class="primary"/>
+				<geom mesh="support_left" class="secondary"/>
+				<geom mesh="support_right" class="secondary"/>
+				<geom mesh="support_front_nose" class="primary"/>
+				<geom mesh="main_rail" class="secondary"/>
+				<!-- slider_front -->
+				<body name="slider_front_body">
+					<joint name="slider_front" type="slide" range="0 0.05684" class="slider"/>
+					<geom mesh="slider_front_body" class="slider"/>
+					<body>
+						<joint name="slider_front_clamp_left" class="clamp"/>
+						<geom mesh="slider_front_clamp_left" class="clamp"/>
+					</body>
+					<body>
+						<joint name="slider_front_clamp_right" axis="-1 0 0" class="clamp"/>
+						<geom type="mesh" mesh="slider_front_clamp_right" class="clamp"/>
+					</body>
+				</body>
+				<!-- slider_middle -->
+				<body name="slider_middle_body">
+					<joint name="slider_middle" range="0 0.0724" class="slider"/>
+					<geom mesh="slider_middle_body" class="slider"/>
+					<body name="slider_middle_wheel_lower_body">
+						<joint name="slider_middle_wheel_lower" class="wheel_low" pos=".0076207 .56155 1.04172"/>
+						<geom mesh="slider_middle_wheel_lower" class="wheel_low"/>
+					</body>
+					<body name="slider_middle_wheel_upper_body">
+						<joint name="slider_middle_wheel_upper"  type="hinge" class="wheel_up" pos="0.0076103 -0.56042 1.07725"/>
+						<geom mesh="slider_middle_wheel_upper" class="wheel_up"/>
+					</body>
+				</body>
+				<!-- rail_upper -->
+				<body name="rail_upper_body">
+					<geom type="mesh" mesh="rail_upper" material="sns-blue" contype="0" conaffinity="0"/>
+					<geom type="mesh" mesh="rail_upper_support" material="sns-blue" contype="0" conaffinity="0"/>
+
+					<body name="slider_upper_body">
+						<joint name="slider_upper" range="-0.04891 0" class="slider"/>
+						<geom mesh="slider_upper_body" class="slider"/>
+						<body>
+							<joint name="slider_upper_clamp_left" class="clamp"/>
+							<geom mesh="slider_upper_clamp_left" class="clamp"/>
+						</body>
+						<body>
+							<joint name="slider_upper_clamp_right" axis="-1 0 0" class="clamp"/>
+							<geom mesh="slider_upper_clamp_right" class="clamp"/>
+						</body>
+					</body>
+				</body>
+				<!-- slider_rear -->
+				<body name="slider_rear_body">
+					<joint name="slider_rear" range="0 0.04719" class="slider"/>
+					<geom mesh="slider_rear_body" class="slider"/>
+					<body name="slider_rear_wheel_lower_body">
+						<joint name="slider_rear_wheel_lower"  class="wheel_low" pos="0.0078395 -.78808 1.04179"/>
+						<geom mesh="slider_rear_wheel_lower" class="wheel_low"/>
+					</body>
+					<body name="slider_rear_wheel_upper_body">
+						<joint name="slider_rear_wheel_upper"  class="wheel_up" pos="0.0077375 -.74447 1.0773"/>
+						<geom mesh="slider_rear_wheel_upper" class="wheel_up" />
+					</body>
+				</body>
+			</body>
+		</body>
+
+	</worldbody>
+	<!-- <contact>
+		<exclude body1="slider_front_body" body2="main_rail_body"/>
+		<exclude body1="slider_middle_body" body2="main_rail_body"/>
+		<exclude body1="slider_upper_body" body2="rail_upper_body"/>
+		<exclude body1="slider_rear_body" body2="main_rail_body"/>
+		<exclude body1="slider_middle_wheel_upper_body" body2="slider_middle_wheel_lower_body"/>
+		<exclude body1="slider_rear_wheel_upper_body" body2="slider_rear_wheel_lower_body"/>
+	</contact> -->
+
+	<actuator>
+		<!-- slider_front -->
+		<motor name="slider_front_motor" joint="slider_front" class="slider"/>
+		<motor name="slider_front_clamp_left_motor" joint="slider_front_clamp_left" class="clamp"/>
+		<motor name="slider_front_clamp_right_motor" joint="slider_front_clamp_right" class="clamp"/>
+		<!-- slider_middle -->
+		<motor name="slider_middle_motor" joint="slider_middle" class="slider"/>
+		<motor name="slider_middle_wheel_lower_motor" joint="slider_middle_wheel_lower" class="wheel_low"/>
+		<motor name="slider_middle_wheel_upper_motor" joint="slider_middle_wheel_upper" class="wheel_up"/>
+		<!-- slider_upper -->
+		<motor name="slider_upper_motor" joint="slider_upper" class="slider"/>
+		<motor name="slider_upper_clamp_left_motor" joint="slider_upper_clamp_left" class="clamp"/>
+		<motor name="slider_upper_clamp_right_motor" joint="slider_upper_clamp_right" class="clamp"/>
+		<!-- slider_rear -->
+		<motor name="slider_rear_motor" joint="slider_rear" class="slider"/>
+		<motor name="slider_rear_wheel_lower_motor" joint="slider_rear_wheel_lower" class="wheel_low"/>
+		<motor name="slider_rear_wheel_upper_motor" joint="slider_rear_wheel_upper" class="wheel_up"/>
+	</actuator>
+</mujoco>

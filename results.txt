@@ -1,0 +1,22 @@
+PPO (-2255.537673997879, 2323.8522144923195, -1.7333778118001226, 2.1214895976839676)
+PPO Mean: -2255.537673997879 +-2323.85
+...loading SAC...
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+SAC (-5094.507550883293, 0.003539574221408645, -0.058125631303387736, 0.0015434710824718226)
+SAC Mean: -5094.507550883293 +-0.00
+...loading TD3...
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+TD3 (-5145.614306688309, 0.0, -0.06325764230298656, 0.0)
+TD3 Mean: -5145.614306688309 +-0.00
+...loading TQC...
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+TQC (-5022.611502790451, 2.936791882023657, -0.11042990030325424, 0.005490279633962551)
+TQC Mean: -5022.611502790451 +-2.94
+...loading A2C...
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+A2C (-4650.501268625259, 867.7325231882825, -1.8763382294707491, 1.629661758656566)
+A2C Mean: -4650.501268625259 +-867.73

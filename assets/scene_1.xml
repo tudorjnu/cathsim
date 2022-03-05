@@ -1,0 +1,113 @@
+<mujoco>
+	<include file="phantom_1.xml"/>
+	<include file="mjmodel_3.xml"/> 
+	<!--<include file="catheter.xml"/>-->
+	 <!--<include file="cylinder.xml"/> -->
+	<!--<include file="slave.xml"/> -->
+	<size njmax="2000" nconmax="500"/>
+	<compiler meshdir="meshes" texturedir="textures" angle="degree"/>
+	<option gravity="0 0 0" timestep="0.009" />
+	<asset>
+		<texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="512"/>
+		<texture name="texplane" type="2d" builtin="checker" rgb1="0.9098039216 0.9294117647 0.9333333333" rgb2="0.4627450980 0.5254901961 0.5725490196" width="512" height="512" mark="cross" markrgb=".8 .8 .8"/>
+		<material name="matplane" reflectance="0.05" texture="texplane" texrepeat="1 1" texuniform="true"/>
+		<material name="blue" rgba="0.3882352941 0.4313725490 0.5019607843 1"/>
+		<material name="silverish" rgba="0.7215686275 0.7137254902 0.6666666667 1"/>
+		<material name="pale_gray" rgba="1 1 1 1"/>
+		<!-- <material name="silver" rgba="0.89 0.89 0.89 1" shininess="0.5" reflectance="0.2"/> -->
+		<material name="black" rgba="0.15 0.15 0.15 1"/>
+		<material name="dark_grey" rgba="0.16 0.17 0.18 1"/>
+		<material name="lighter_dark_grey" rgba="0.25 0.25 0.25 1"/>
+		<material name="grey" rgba="0.51 0.51 0.51 1"/>
+		<material name="light_grey" rgba="0.7 0.7 0.7 1"/>
+		<material name="cadet-blue-crayola" rgba="0.64 0.7 0.78 1"/>
+		<material name="gainsboro"  rgba="0.87 0.87 0.89 1"/>
+		<material name="white" rgba="0.99 0.99 0.99 1"/>
+		<material name="baby-blue-eyes" rgba="0.58 0.75 0.92 1"/>
+		<material name="alice-blue" rgba="0.88 0.9 0.93 1"/>
+
+		<mesh file="scene/walls.stl"/>
+		<mesh file="scene/cable_computer.stl"/>
+		<mesh file="scene/keyboard.stl"/>
+		<mesh file="scene/mouse.stl"/>
+		<mesh file="scene/master.stl"/>
+		<mesh file="scene/screen_1.stl"/>
+		<mesh file="scene/screen_2.stl"/>
+		<mesh file="scene/monitor_stand.stl"/>
+		<mesh file="scene/monitor_support.stl"/>
+		<mesh file="scene/window_frame_1.stl"/>
+		<mesh file="scene/window_frame_2.stl"/>
+		<mesh file="scene/human.stl"/>
+		<mesh file="scene/chair.stl"/>
+		<mesh file="scene/chair_001.stl"/>
+
+		<mesh file="scene/rfi/adjust_vertical.stl"/>
+		<mesh file="scene/rfi/arch_vertical.stl"/>
+		<mesh file="scene/rfi/aux.stl"/>
+		<mesh file="scene/rfi/aux_001.stl"/>
+		<mesh file="scene/rfi/arch_base.stl"/>
+		<mesh file="scene/rfi/cables.stl"/>
+		<mesh file="scene/rfi/ceiling_support.stl"/>
+		<mesh file="scene/rfi/ceiling_support_001.stl"/>
+		<mesh file="scene/rfi/monitor_frame.stl"/>
+		<mesh file="scene/rfi/monitor_screen.stl"/>
+		<mesh file="scene/rfi/monitor_support_001.stl"/>
+		<mesh file="scene/rfi/platform.stl"/>
+		<mesh file="scene/rfi/platform_support.stl"/>
+		<mesh file="scene/rfi/platform_support_001.stl"/>
+		<mesh file="scene/rfi/scanners.stl"/>
+		<mesh file="scene/rfi/support_arch.stl"/>
+		<mesh file="scene/box.stl"/>
+		<!--<mesh file="scene/target_bca.stl"/>-->
+	</asset>
+	<default>
+		<default class="scene">
+			<geom type="mesh" contype="0" conaffinity="0"/>
+			<site type="sphere" rgba="0.25, 0.5, 0.96 0.7" size="0.005"/>
+		</default>
+	</default>
+	<worldbody>
+		<site name="target_bca" class="scene" size="0.005" pos="-0.029918 0.055143 1.0431"/>
+		<site name="target_lcca" class="scene" pos="0.003474, 0.055143, 1.0357"/>
+
+		<geom name="floor" pos="0 0 -.22" size="0 0 .25" type="plane" material="matplane" condim="3"/>
+		<light directional="true" diffuse=".2 .2 .2" specular="0 0 0" pos="0 0 5" dir="0 0 -1" castshadow="false"/>
+		<light directional="false" diffuse=".8 .8 .8" specular="0.3 0.3 0.3" pos="0 0 4.0" dir="0 0 -1" castshadow="false"/>
+
+		<camera name="top_view" pos="0.007738 -0.029034 1.550" euler="0 0 0"/>
+		<camera name="room_view" pos="-3.3639 -6.1446 1.8245" quat="0.723 0.635 -0.179 -0.203"/>
+		<camera name="side_view" pos="-.6809 .0042968 1.0705" quat="0.5 0.5 -0.5 -0.5"/>
+
+		<geom type="box" pos="0.007146 -0.58483 0.91779" size="0.074 0.276 0.060" class="scene" material="alice-blue"/>
+		<geom type="mesh" mesh="box" rgba=".85 .85 .85 0.3" contype="0" conaffinity="0"/>
+		<geom class="scene" mesh="walls" material="alice-blue"/>
+		<geom class="scene" mesh="cable_computer" material="black"/>
+		<geom class="scene" mesh="keyboard" material="dark_grey"/>
+		<geom class="scene" mesh="mouse" material="dark_grey"/>
+		<geom class="scene" mesh="master" />
+		<geom class="scene" mesh="screen_1"  material="black"/>
+		<geom class="scene" mesh="screen_2"  material="black"/>
+		<geom class="scene" mesh="monitor_stand" material="lighter_dark_grey"/>
+		<geom class="scene" mesh="monitor_support" material="grey"/>
+		<geom class="scene" mesh="human" />
+		<geom class="scene" mesh="chair" material="dark_grey"/>
+		<geom class="scene" mesh="chair_001" material="dark_grey"/>
+		<geom class="scene" mesh="adjust_vertical" material="gainsboro"/>
+		<geom class="scene" mesh="arch_vertical" material="alice-blue"/>
+		<geom class="scene" mesh="aux" material="baby-blue-eyes"/>
+		<geom class="scene" mesh="aux_001" material="cadet-blue-crayola"/>
+		<geom class="scene" mesh="arch_base" material="alice-blue"/>
+		<geom class="scene" mesh="cables" material="black"/>
+		<geom class="scene" mesh="ceiling_support" material="grey"/>
+		<geom class="scene" mesh="ceiling_support_001" material="grey"/>
+		<geom class="scene" mesh="monitor_frame" material="lighter_dark_grey"/>
+		<geom class="scene" mesh="monitor_screen" material="black"/>
+		<geom class="scene" mesh="monitor_support_001" material="grey"/>
+		<geom class="scene" mesh="platform" material="alice-blue"/>
+		<geom class="scene" mesh="platform_support" material="alice-blue"/>
+		<geom class="scene" mesh="platform_support_001" material="baby-blue-eyes"/>
+		<geom class="scene" mesh="scanners" material="white"/>
+		<geom class="scene" mesh="support_arch" material="baby-blue-eyes"/>
+
+	</worldbody>
+</mujoco>

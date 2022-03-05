@@ -1,0 +1,398 @@
+<mujoco model="MuJoCo Model">
+    <compiler angle="degree" />
+	<option gravity="0 0 0"/>
+    <size njmax="500" nconmax="100" />
+    <default class="main">
+        <default class="catheter">
+            <motor ctrllimited="true"  forcelimited="true" ctrlrange="-1 1" forcerange="-0.005 0.005" />
+			<joint pos="-0.00345 0 0" group="3" limited="true" stiffness="1e-05" range="-15 15" armature="0.1" damping="0.005" />
+			<geom size="0.0018 0.003" quat="0.707107 0 0.707107 0" type="capsule" group="1" rgba="0.2 0.2 0.2 1" />
+        </default>
+    </default>
+    <worldbody>
+        <body name="B0" pos="0.0076103 -0.62447 1.07725" quat="0.707107 0 0 0.707107">
+            <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+            <joint name="slider_joint" pos="0 0 0" axis="1 0 0" type="slide" limited="true" range="0 2" />
+            <joint name="twister_joint" pos="0 0 0" axis="1 0 0" />
+            <geom name="G0" class="catheter" />
+            <body name="B1" pos="0.0069 0 0">
+                <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                <joint name="J0_1"  axis="0 1 0" class="catheter" />
+                <joint name="J1_1"  axis="0 0 1" class="catheter" />
+                <geom name="G1" class="catheter" />
+                <body name="B2" pos="0.0069 0 0">
+                    <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                    <joint name="J0_2"  axis="0 1 0" class="catheter" />
+                    <joint name="J1_2"  axis="0 0 1" class="catheter" />
+                    <geom name="G2" class="catheter" />
+                    <body name="B3" pos="0.0069 0 0">
+                        <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                        <joint name="J0_3"  axis="0 1 0" class="catheter" />
+                        <joint name="J1_3"  axis="0 0 1" class="catheter" />
+                        <geom name="G3" class="catheter" />
+                        <body name="B4" pos="0.0069 0 0">
+                            <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                            <joint name="J0_4"  axis="0 1 0" class="catheter" />
+                            <joint name="J1_4"  axis="0 0 1" class="catheter" />
+                            <geom name="G4" class="catheter" />
+                            <body name="B5" pos="0.0069 0 0">
+                                <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                <joint name="J0_5"  axis="0 1 0" class="catheter" />
+                                <joint name="J1_5"  axis="0 0 1" class="catheter" />
+                                <geom name="G5" class="catheter" />
+                                <body name="B6" pos="0.0069 0 0">
+                                    <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                    <joint name="J0_6"  axis="0 1 0" class="catheter" />
+                                    <joint name="J1_6"  axis="0 0 1" class="catheter" />
+                                    <geom name="G6" class="catheter" />
+                                    <body name="B7" pos="0.0069 0 0">
+                                        <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                        <joint name="J0_7"  axis="0 1 0" class="catheter" />
+                                        <joint name="J1_7"  axis="0 0 1" class="catheter" />
+                                        <geom name="G7" class="catheter" />
+                                        <body name="B8" pos="0.0069 0 0">
+                                            <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                            <joint name="J0_8"  axis="0 1 0" class="catheter" />
+                                            <joint name="J1_8"  axis="0 0 1" class="catheter" />
+                                            <geom name="G8" class="catheter" />
+                                            <body name="B9" pos="0.0069 0 0">
+                                                <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                <joint name="J0_9"  axis="0 1 0" class="catheter" />
+                                                <joint name="J1_9"  axis="0 0 1" class="catheter" />
+                                                <geom name="G9" class="catheter" />
+                                                <body name="B10" pos="0.0069 0 0">
+                                                    <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                    <joint name="J0_10"  axis="0 1 0" class="catheter" />
+                                                    <joint name="J1_10"  axis="0 0 1" class="catheter" />
+                                                    <geom name="G10" class="catheter" />
+                                                    <body name="B11" pos="0.0069 0 0">
+                                                        <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                        <joint name="J0_11"  axis="0 1 0" class="catheter" />
+                                                        <joint name="J1_11"  axis="0 0 1" class="catheter" />
+                                                        <geom name="G11" class="catheter" />
+                                                        <body name="B12" pos="0.0069 0 0">
+                                                            <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                            <joint name="J0_12"  axis="0 1 0" class="catheter" />
+                                                            <joint name="J1_12"  axis="0 0 1" class="catheter" />
+                                                            <geom name="G12" class="catheter" />
+                                                            <body name="B13" pos="0.0069 0 0">
+                                                                <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                <joint name="J0_13"  axis="0 1 0" class="catheter" />
+                                                                <joint name="J1_13"  axis="0 0 1" class="catheter" />
+                                                                <geom name="G13" class="catheter" />
+                                                                <body name="B14" pos="0.0069 0 0">
+                                                                    <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                    <joint name="J0_14"  axis="0 1 0" class="catheter" />
+                                                                    <joint name="J1_14"  axis="0 0 1" class="catheter" />
+                                                                    <geom name="G14" class="catheter" />
+                                                                    <body name="B15" pos="0.0069 0 0">
+                                                                        <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                        <joint name="J0_15"  axis="0 1 0" class="catheter" />
+                                                                        <joint name="J1_15"  axis="0 0 1" class="catheter" />
+                                                                        <geom name="G15" class="catheter" />
+                                                                        <body name="B16" pos="0.0069 0 0">
+                                                                            <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                            <joint name="J0_16"  axis="0 1 0" class="catheter" />
+                                                                            <joint name="J1_16"  axis="0 0 1" class="catheter" />
+                                                                            <geom name="G16" class="catheter" />
+                                                                            <body name="B17" pos="0.0069 0 0">
+                                                                                <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                <joint name="J0_17"  axis="0 1 0" class="catheter" />
+                                                                                <joint name="J1_17"  axis="0 0 1" class="catheter" />
+                                                                                <geom name="G17" class="catheter" />
+                                                                                <body name="B18" pos="0.0069 0 0">
+                                                                                    <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                    <joint name="J0_18"  axis="0 1 0" class="catheter" />
+                                                                                    <joint name="J1_18"  axis="0 0 1" class="catheter" />
+                                                                                    <geom name="G18" class="catheter" />
+                                                                                    <body name="B19" pos="0.0069 0 0">
+                                                                                        <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                        <joint name="J0_19"  axis="0 1 0" class="catheter" />
+                                                                                        <joint name="J1_19"  axis="0 0 1" class="catheter" />
+                                                                                        <geom name="G19" class="catheter" />
+                                                                                        <body name="B20" pos="0.0069 0 0">
+                                                                                            <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                            <joint name="J0_20"  axis="0 1 0" class="catheter" />
+                                                                                            <joint name="J1_20"  axis="0 0 1" class="catheter" />
+                                                                                            <geom name="G20" class="catheter" />
+                                                                                            <body name="B21" pos="0.0069 0 0">
+                                                                                                <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                <joint name="J0_21"  axis="0 1 0" class="catheter" />
+                                                                                                <joint name="J1_21"  axis="0 0 1" class="catheter" />
+                                                                                                <geom name="G21" class="catheter" />
+                                                                                                <body name="B22" pos="0.0069 0 0">
+                                                                                                    <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                    <joint name="J0_22"  axis="0 1 0" class="catheter" />
+                                                                                                    <joint name="J1_22"  axis="0 0 1" class="catheter" />
+                                                                                                    <geom name="G22" class="catheter" />
+                                                                                                    <body name="B23" pos="0.0069 0 0">
+                                                                                                        <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                        <joint name="J0_23"  axis="0 1 0" class="catheter" />
+                                                                                                        <joint name="J1_23"  axis="0 0 1" class="catheter" />
+                                                                                                        <geom name="G23" class="catheter" />
+                                                                                                        <body name="B24" pos="0.0069 0 0">
+                                                                                                            <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                            <joint name="J0_24"  axis="0 1 0" class="catheter" />
+                                                                                                            <joint name="J1_24"  axis="0 0 1" class="catheter" />
+                                                                                                            <geom name="G24" class="catheter" />
+                                                                                                            <body name="B25" pos="0.0069 0 0">
+                                                                                                                <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                <joint name="J0_25"  axis="0 1 0" class="catheter" />
+                                                                                                                <joint name="J1_25"  axis="0 0 1" class="catheter" />
+                                                                                                                <geom name="G25" class="catheter" />
+                                                                                                                <body name="B26" pos="0.0069 0 0">
+                                                                                                                    <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                    <joint name="J0_26"  axis="0 1 0" class="catheter" />
+                                                                                                                    <joint name="J1_26"  axis="0 0 1" class="catheter" />
+                                                                                                                    <geom name="G26" class="catheter" />
+                                                                                                                    <body name="B27" pos="0.0069 0 0">
+                                                                                                                        <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                        <joint name="J0_27"  axis="0 1 0" class="catheter" />
+                                                                                                                        <joint name="J1_27"  axis="0 0 1" class="catheter" />
+                                                                                                                        <geom name="G27" class="catheter" />
+                                                                                                                        <body name="B28" pos="0.0069 0 0">
+                                                                                                                            <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                            <joint name="J0_28"  axis="0 1 0" class="catheter" />
+                                                                                                                            <joint name="J1_28"  axis="0 0 1" class="catheter" />
+                                                                                                                            <geom name="G28" class="catheter" />
+                                                                                                                            <body name="B29" pos="0.0069 0 0">
+                                                                                                                                <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                                <joint name="J0_29"  axis="0 1 0" class="catheter" />
+                                                                                                                                <joint name="J1_29"  axis="0 0 1" class="catheter" />
+                                                                                                                                <geom name="G29" class="catheter" />
+                                                                                                                                <body name="B30" pos="0.0069 0 0">
+                                                                                                                                    <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                                    <joint name="J0_30"  axis="0 1 0" class="catheter" />
+                                                                                                                                    <joint name="J1_30"  axis="0 0 1" class="catheter" />
+                                                                                                                                    <geom name="G30" class="catheter" />
+                                                                                                                                    <body name="B31" pos="0.0069 0 0">
+                                                                                                                                        <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                                        <joint name="J0_31"  axis="0 1 0" class="catheter" />
+                                                                                                                                        <joint name="J1_31"  axis="0 0 1" class="catheter" />
+                                                                                                                                        <geom name="G31" class="catheter" />
+                                                                                                                                        <body name="B32" pos="0.0069 0 0">
+                                                                                                                                            <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                                            <joint name="J0_32"  axis="0 1 0" class="catheter" />
+                                                                                                                                            <joint name="J1_32"  axis="0 0 1" class="catheter" />
+                                                                                                                                            <geom name="G32" class="catheter" />
+                                                                                                                                            <body name="B33" pos="0.0069 0 0">
+                                                                                                                                                <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                                                <joint name="J0_33"  axis="0 1 0" class="catheter" />
+                                                                                                                                                <joint name="J1_33"  axis="0 0 1" class="catheter" />
+                                                                                                                                                <geom name="G33" class="catheter" />
+                                                                                                                                                <body name="B34" pos="0.0069 0 0">
+                                                                                                                                                    <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                                                    <joint name="J0_34"  axis="0 1 0" class="catheter" />
+                                                                                                                                                    <joint name="J1_34"  axis="0 0 1" class="catheter" />
+                                                                                                                                                    <geom name="G34" class="catheter" />
+                                                                                                                                                    <body name="B35" pos="0.0069 0 0">
+                                                                                                                                                        <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                                                        <joint name="J0_35"  axis="0 1 0" class="catheter" />
+                                                                                                                                                        <joint name="J1_35"  axis="0 0 1" class="catheter" />
+                                                                                                                                                        <geom name="G35" class="catheter" />
+                                                                                                                                                        <body name="B36" pos="0.0069 0 0">
+                                                                                                                                                            <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                                                            <joint name="J0_36"  axis="0 1 0" class="catheter" />
+                                                                                                                                                            <joint name="J1_36"  axis="0 0 1" class="catheter" />
+                                                                                                                                                            <geom name="G36" class="catheter" />
+                                                                                                                                                            <body name="B37" pos="0.0069 0 0">
+                                                                                                                                                                <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                                                                <joint name="J0_37"  axis="0 1 0" class="catheter" />
+                                                                                                                                                                <joint name="J1_37"  axis="0 0 1" class="catheter" />
+                                                                                                                                                                <geom name="G37" class="catheter" />
+                                                                                                                                                                <body name="B38" pos="0.0069 0 0">
+                                                                                                                                                                    <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                                                                    <joint name="J0_38"  axis="0 1 0" class="catheter" />
+                                                                                                                                                                    <joint name="J1_38"  axis="0 0 1" class="catheter" />
+                                                                                                                                                                    <geom name="G38" class="catheter" />
+                                                                                                                                                                    <body name="B39" pos="0.0069 0 0">
+                                                                                                                                                                        <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                                                                        <joint name="J0_39"  axis="0 1 0" class="catheter" />
+                                                                                                                                                                        <joint name="J1_39"  axis="0 0 1" class="catheter" />
+                                                                                                                                                                        <geom name="G39" class="catheter" />
+                                                                                                                                                                        <body name="B40" pos="0.0069 0 0">
+                                                                                                                                                                            <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                                                                            <joint name="J0_40"  axis="0 1 0" class="catheter" />
+                                                                                                                                                                            <joint name="J1_40"  axis="0 0 1" class="catheter" />
+                                                                                                                                                                            <geom name="G40" class="catheter" />
+                                                                                                                                                                            <body name="B41" pos="0.0069 0 0">
+                                                                                                                                                                                <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                                                                                <joint name="J0_41"  axis="0 1 0" class="catheter" />
+                                                                                                                                                                                <joint name="J1_41"  axis="0 0 1" class="catheter" />
+                                                                                                                                                                                <geom name="G41" class="catheter" />
+                                                                                                                                                                                <body name="B42" pos="0.0069 0 0">
+                                                                                                                                                                                    <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                                                                                    <joint name="J0_42"  axis="0 1 0" class="catheter" />
+                                                                                                                                                                                    <joint name="J1_42"  axis="0 0 1" class="catheter" />
+                                                                                                                                                                                    <geom name="G42" class="catheter" />
+                                                                                                                                                                                    <body name="B43" pos="0.0069 0 0">
+                                                                                                                                                                                        <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                                                                                        <joint name="J0_43"  axis="0 1 0" class="catheter" />
+                                                                                                                                                                                        <joint name="J1_43"  axis="0 0 1" class="catheter" />
+                                                                                                                                                                                        <geom name="G43" class="catheter" />
+                                                                                                                                                                                        <body name="B44" pos="0.0069 0 0">
+                                                                                                                                                                                            <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                                                                                            <joint name="J0_44"  axis="0 1 0" class="catheter" />
+                                                                                                                                                                                            <joint name="J1_44"  axis="0 0 1" class="catheter" />
+                                                                                                                                                                                            <geom name="G44" class="catheter" />
+                                                                                                                                                                                            <body name="B45" pos="0.0069 0 0">
+                                                                                                                                                                                                <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                                                                                                <joint name="J0_45"  axis="0 1 0" class="catheter" />
+                                                                                                                                                                                                <joint name="J1_45"  axis="0 0 1" class="catheter" />
+                                                                                                                                                                                                <geom name="G45" class="catheter" />
+                                                                                                                                                                                                <body name="B46" pos="0.0069 0 0">
+                                                                                                                                                                                                    <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                                                                                                    <joint name="J0_46"  axis="0 1 0" class="catheter" />
+                                                                                                                                                                                                    <joint name="J1_46"  axis="0 0 1" class="catheter" />
+                                                                                                                                                                                                    <geom name="G46" class="catheter" />
+                                                                                                                                                                                                    <body name="B47" pos="0.0069 0 0">
+                                                                                                                                                                                                        <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                                                                                                        <joint name="J0_47"  axis="0 1 0" class="catheter" />
+                                                                                                                                                                                                        <joint name="J1_47"  axis="0 0 1" class="catheter" />
+                                                                                                                                                                                                        <geom name="G47" class="catheter" />
+                                                                                                                                                                                                        <body name="B48" pos="0.0069 0 0">
+                                                                                                                                                                                                            <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                                                                                                            <joint name="J0_48"  axis="0 1 0" class="catheter" />
+                                                                                                                                                                                                            <joint name="J1_48"  axis="0 0 1" class="catheter" />
+                                                                                                                                                                                                            <geom name="G48" class="catheter" />
+                                                                                                                                                                                                            <body name="B49" pos="0.0069 0 0">
+                                                                                                                                                                                                                <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                                                                                                                <joint name="J0_49"  axis="0 1 0" class="catheter" />
+                                                                                                                                                                                                                <joint name="J1_49"  axis="0 0 1" class="catheter" />
+                                                                                                                                                                                                                <geom name="G49" class="catheter" />
+                                                                                                                                                                                                                <body name="B50" pos="0.0069 0 0">
+                                                                                                                                                                                                                    <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                                                                                                                    <joint name="J0_50"  axis="0 1 0" class="catheter" />
+                                                                                                                                                                                                                    <joint name="J1_50"  axis="0 0 1" class="catheter" />
+                                                                                                                                                                                                                    <geom name="G50" class="catheter" />
+                                                                                                                                                                                                                    <body name="B51" pos="0.0069 0 0">
+                                                                                                                                                                                                                        <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                                                                                                                        <joint name="J0_51"  axis="0 1 0" class="catheter" />
+                                                                                                                                                                                                                        <joint name="J1_51"  axis="0 0 1" class="catheter" />
+                                                                                                                                                                                                                        <geom name="G51" class="catheter" />
+                                                                                                                                                                                                                        <body name="B52" pos="0.0069 0 0">
+                                                                                                                                                                                                                            <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                                                                                                                            <joint name="J0_52"  axis="0 1 0" class="catheter" />
+                                                                                                                                                                                                                            <joint name="J1_52"  axis="0 0 1" class="catheter" />
+                                                                                                                                                                                                                            <geom name="G52" class="catheter" />
+                                                                                                                                                                                                                            <body name="B53" pos="0.0069 0 0">
+                                                                                                                                                                                                                                <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                                                                                                                                <joint name="J0_53"  axis="0 1 0" class="catheter" />
+                                                                                                                                                                                                                                <joint name="J1_53"  axis="0 0 1" class="catheter" />
+                                                                                                                                                                                                                                <geom name="G53" class="catheter" />
+                                                                                                                                                                                                                                <body name="B54" pos="0.0069 0 0">
+                                                                                                                                                                                                                                    <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                                                                                                                                    <joint name="J0_54"  axis="0 1 0" class="catheter" />
+                                                                                                                                                                                                                                    <joint name="J1_54"  axis="0 0 1" class="catheter" />
+                                                                                                                                                                                                                                    <geom name="G54" class="catheter" />
+                                                                                                                                                                                                                                    <body name="B55" pos="0.0069 0 0">
+                                                                                                                                                                                                                                        <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                                                                                                                                        <joint name="J0_55"  axis="0 1 0" class="catheter" />
+                                                                                                                                                                                                                                        <joint name="J1_55"  axis="0 0 1" class="catheter" />
+                                                                                                                                                                                                                                        <geom name="G55" class="catheter" />
+                                                                                                                                                                                                                                        <body name="B56" pos="0.0069 0 0">
+                                                                                                                                                                                                                                            <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                                                                                                                                            <joint name="J0_56"  axis="0 1 0" class="catheter" />
+                                                                                                                                                                                                                                            <joint name="J1_56"  axis="0 0 1" class="catheter" />
+                                                                                                                                                                                                                                            <geom name="G56" class="catheter" />
+                                                                                                                                                                                                                                            <body name="B57" pos="0.0069 0 0">
+                                                                                                                                                                                                                                                <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                                                                                                                                                <joint name="J0_57"  axis="0 1 0" class="catheter" />
+                                                                                                                                                                                                                                                <joint name="J1_57"  axis="0 0 1" class="catheter" />
+                                                                                                                                                                                                                                                <geom name="G57" class="catheter" />
+                                                                                                                                                                                                                                                <body name="B58" pos="0.0069 0 0">
+                                                                                                                                                                                                                                                    <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                                                                                                                                                    <joint name="J0_58"  axis="0 1 0" class="catheter" />
+                                                                                                                                                                                                                                                    <joint name="J1_58"  axis="0 0 1" class="catheter" />
+                                                                                                                                                                                                                                                    <geom name="G58" class="catheter" />
+                                                                                                                                                                                                                                                    <body name="B59" pos="0.0069 0 0">
+                                                                                                                                                                                                                                                        <inertial pos="0 0 0" quat="0.707107 0 0.707107 0" mass="7.93943e-05" diaginertia="4.66839e-10 4.66839e-10 1.28619e-10" />
+                                                                                                                                                                                                                                                        <joint name="J0_59"  axis="0 1 0" class="catheter" />
+                                                                                                                                                                                                                                                        <joint name="J1_59"  axis="0 0 1" class="catheter" />
+                                                                                                                                                                                                                                                        <geom name="G59" class="catheter" />
+                                                                                                                                                                                                                                                    </body>
+                                                                                                                                                                                                                                                </body>
+                                                                                                                                                                                                                                            </body>
+                                                                                                                                                                                                                                        </body>
+                                                                                                                                                                                                                                    </body>
+                                                                                                                                                                                                                                </body>
+                                                                                                                                                                                                                            </body>
+                                                                                                                                                                                                                        </body>
+                                                                                                                                                                                                                    </body>
+                                                                                                                                                                                                                </body>
+                                                                                                                                                                                                            </body>
+                                                                                                                                                                                                        </body>
+                                                                                                                                                                                                    </body>
+                                                                                                                                                                                                </body>
+                                                                                                                                                                                            </body>
+                                                                                                                                                                                        </body>
+                                                                                                                                                                                    </body>
+                                                                                                                                                                                </body>
+                                                                                                                                                                            </body>
+                                                                                                                                                                        </body>
+                                                                                                                                                                    </body>
+                                                                                                                                                                </body>
+                                                                                                                                                            </body>
+                                                                                                                                                        </body>
+                                                                                                                                                    </body>
+                                                                                                                                                </body>
+                                                                                                                                            </body>
+                                                                                                                                        </body>
+                                                                                                                                    </body>
+                                                                                                                                </body>
+                                                                                                                            </body>
+                                                                                                                        </body>
+                                                                                                                    </body>
+                                                                                                                </body>
+                                                                                                            </body>
+                                                                                                        </body>
+                                                                                                    </body>
+                                                                                                </body>
+                                                                                            </body>
+                                                                                        </body>
+                                                                                    </body>
+                                                                                </body>
+                                                                            </body>
+                                                                        </body>
+                                                                    </body>
+                                                                </body>
+                                                            </body>
+                                                        </body>
+                                                    </body>
+                                                </body>
+                                            </body>
+                                        </body>
+                                    </body>
+                                </body>
+                            </body>
+                        </body>
+                    </body>
+                </body>
+            </body>
+        </body>
+    </worldbody>
+    <actuator>
+        <general name="slider_motor" joint="slider_joint" ctrllimited="true" forcelimited="true" ctrlrange="-1 1" forcerange="-0.025 0.025" />
+        <general name="twister_motor" joint="twister_joint" ctrllimited="true" forcelimited="true" ctrlrange="-1 1" forcerange="-0.025 0.025" />
+		<motor name="J0_50_motor" joint="J0_50" class="catheter"/>
+		<motor name="J1_50_motor" joint="J1_50" class="catheter"/>
+		<motor name="J0_51_motor" joint="J0_51" class="catheter"/>
+		<motor name="J1_51_motor" joint="J1_51" class="catheter"/>
+		<motor name="J0_52_motor" joint="J0_52" class="catheter"/>
+		<motor name="J1_52_motor" joint="J1_52" class="catheter"/>
+		<motor name="J0_53_motor" joint="J0_53" class="catheter"/>
+		<motor name="J1_53_motor" joint="J1_53" class="catheter"/>
+		<motor name="J0_54_motor" joint="J0_54" class="catheter"/>
+		<motor name="J1_54_motor" joint="J1_54" class="catheter"/>
+		<motor name="J0_55_motor" joint="J0_55" class="catheter"/>
+		<motor name="J1_55_motor" joint="J1_55" class="catheter"/>
+		<motor name="J0_56_motor" joint="J0_56" class="catheter"/>
+		<motor name="J1_56_motor" joint="J1_56" class="catheter"/>
+		<motor name="J0_57_motor" joint="J0_57" class="catheter"/>
+		<motor name="J1_57_motor" joint="J1_57" class="catheter"/>
+		<motor name="J0_58_motor" joint="J0_58" class="catheter"/>
+		<motor name="J1_58_motor" joint="J1_58" class="catheter"/>
+		<motor name="J0_59_motor" joint="J0_59" class="catheter"/>
+		<motor name="J1_59_motor" joint="J1_59" class="catheter"/>
+    </actuator>
+</mujoco>
