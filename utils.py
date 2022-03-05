@@ -1,15 +1,18 @@
-from stable_baselines3.common.callbacks import BaseCallback, EventCallback
-from stable_baselines3.common.logger import Image
 import os
 import warnings
-from typing import Any,  Dict,  Optional, Union, List, Tuple, Callable
-from stable_baselines3.common import base_class
-from stable_baselines3.common.vec_env import DummyVecEnv, VecEnv, VecMonitor, is_vecenv_wrapped
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
+import cv2
 import gym
+import matplotlib.pyplot as plt
 import numpy as np
-
-from stable_baselines3.common.vec_env import DummyVecEnv, VecEnv, sync_envs_normalization
+from stable_baselines3.common import base_class
+from stable_baselines3.common.callbacks import BaseCallback, EventCallback
+from stable_baselines3.common.logger import Image
+from stable_baselines3.common.vec_env import (DummyVecEnv, VecEnv, VecMonitor,
+                                              is_vecenv_wrapped,
+                                              sync_envs_normalization)
+from tqdm import trange
 
 
 def evaluate_policy(
@@ -141,6 +144,7 @@ def evaluate_policy(
 
     mean_force = np.mean(episode_forces)
     std_force = np.std(episode_forces)
+
     if reward_threshold is not None:
         assert mean_reward > reward_threshold, "Mean reward below threshold: " f"{mean_reward:.2f} < {reward_threshold:.2f}"
     if return_episode_rewards:
@@ -340,35 +344,130 @@ class TensorboardCallback(BaseCallback):
     Custom callback for plotting additional values in tensorboard.
     """
 
-    def __init__(self, verbose=0, ep_length=20000):
+    def __init__(self, verbose=0, ep_length=20000, heat_path=str, fname=str):
         super(TensorboardCallback, self).__init__(verbose)
 
+        self.path = os.path.join(heat_path, f"{fname}.png")
+
         self.force_image = np.zeros(shape=(256, 256, 1))
+        self.force_image_mean = np.zeros(shape=(256, 256, 1))
+        self.n = 1
         self.step_counter = 0
         self.ep_length = ep_length
 
     def _on_step(self) -> bool:
         info = self.training_env.get_attr("info", 0)[0]
-        force = info['reward_force'] * -100
+        # reward_force = -1 * info['reward_force']
+        mean_force_step = info['mean_force']
+
+        done = info['done']
         self.force_image += info['force_image']
-        self.logger.record('force', force)
-        if self.step_counter == self.ep_length:
+        self.logger.record('step/force_mean', mean_force_step)
+        self.logger.record('step/max_force', np.max(info['force_image']))
+        if done:
             self.force_image = self.force_image / self.step_counter
             self.force_image = (self.force_image - self.force_image.min()) / \
                 (self.force_image.max()-self.force_image.min())
             self.logger.record("force_image", Image(
                 self.force_image, "HWC"), exclude=("stdout", "log", "json", "csv"))
 
+            self.force_image_mean = self.force_image_mean + \
+                (self.force_image - self.force_image_mean)/self.n
+            self.n += 1
+
+            plt.imsave(
+                self.path, np.squeeze(
+                    self.force_image_mean, -1))
+
             mean_force = np.true_divide(
                 self.force_image.sum(), (self.force_image != 0).sum())
 
-            self.logger.record("rollout/ep_force_mean", mean_force)
+            self.logger.record("episode/force_mean", mean_force)
+            self.logger.record("episode/length", self.step_counter)
 
             self.force_image = np.zeros(shape=(256, 256, 1))
             self.step_counter = 0
 
-        self.step_counter += 1
+        else:
+            self.step_counter += 1
         return True
 
     def _on_rollout_end(self):
         pass
+
+
+def evaluate(model, env, n_episodes=3, deterministic=False, render=False,
+             saving_path=None, fname=None):
+
+    rewards = []
+    lengths = []
+    forces = []
+    all_forces = []
+    max_forces = []
+    dones = 0
+    step_cntr = 1
+
+    for i in range(n_episodes):
+        episode_rewards = 0
+        episode_forces = []
+        episode_max_forces = []
+        done = False
+        obs = env.reset()
+        for i in trange(env.ep_length):
+            if render:
+                env.render()
+            action, _state = model.predict(obs, deterministic=deterministic)
+            obs, reward, done, info = env.step(action)
+            episode_rewards += reward
+            episode_forces.append(info['mean_force'])
+            episode_max_forces.append(info['max_force'])
+            forces = info['forces']
+            if len(forces) > 0:
+                all_forces.extend(forces)
+            if done:
+                if step_cntr < env.ep_length:
+                    dones += 1
+                step_cntr = 1
+                break
+            step_cntr += 1
+        lengths.append(env.current_step)
+        rewards.append(episode_rewards)
+        forces.append(np.mean(episode_forces))
+        max_forces.append(np.max(episode_max_forces))
+
+    mean_reward = 0
+    std_reward = 0
+
+    mean_force = 0
+    std_force = 0
+
+    mean_max_force = 0
+    std_max_force = 0
+
+    if len(rewards) > 0:
+        mean_reward = np.mean(rewards)
+        std_reward = np.std(rewards)
+
+    if len(forces) > 0:
+        mean_force = np.mean(forces)
+        std_force = np.std(forces)
+
+    if len(max_forces) > 0:
+        mean_max_force = np.mean(max_forces)
+        std_max_force = np.std(max_forces)
+
+    all_forces = np.squeeze(np.array(all_forces))
+
+    successes = round(dones/n_episodes, 2)
+
+    if saving_path is not None:
+        np.savez(os.path.join(saving_path, fname),
+                 forces=forces,
+                 rewards=rewards,
+                 max_forces=max_forces,
+                 all_forces=all_forces,
+                 successes=successes)
+
+    return (mean_reward, std_reward, mean_force, std_force,
+            mean_max_force, std_max_force, successes,
+            all_forces)

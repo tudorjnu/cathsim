@@ -1,12 +1,11 @@
-from collections import OrderedDict
 import os
+from collections import OrderedDict
+from os import path
 
-
+import gym
+import numpy as np
 from gym import error, spaces
 from gym.utils import seeding
-import numpy as np
-from os import path
-import gym
 
 try:
     import mujoco_py
@@ -17,7 +16,7 @@ except ImportError as e:
         )
     )
 
-DEFAULT_SIZE = 256
+DEFAULT_SIZE = 1000
 
 
 def convert_observation_to_space(observation):
@@ -187,7 +186,8 @@ class MujocoEnv(gym.Env):
             if mode == "human":
                 self.viewer = mujoco_py.MjViewer(self.sim)
             elif mode == "rgb_array" or mode == "depth_array":
-                self.viewer = mujoco_py.MjRenderContextOffscreen(self.sim, -1)
+                self.viewer = mujoco_py.MjRenderContextOffscreen(
+                    self.sim, -1)
 
             self.viewer_setup()
             self._viewers[mode] = self.viewer
