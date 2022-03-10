@@ -35,33 +35,46 @@
 		<material name="orange" rgba="0.9137254901960784 0.30980392156862746 0.21568627450980393 1"/>
 		<material name="red" rgba="0.4196078431372549 0.058823529411764705 0.10196078431372549 1"/>
 		<material name="silver" rgba="0.6745098039215687 0.6745098039215687 0.6745098039215687 1"/>
+
+
+		<material name="sns-blue" rgba="0.29803922 0.44705882 0.69019608 1"/>
+		<material name="sns-orange" rgba="0.86666667 0.51764706 0.32156863 1"/>
+		<material name="sns-green" rgba="0.33333333 0.65882353 0.40784314 1"/>
+		<material name="sns-red" rgba="0.76862745 0.30588235 0.32156863 1"/>
+		<material name="sns-purple" rgba="0.50588235 0.44705882 0.70196078 1"/>
+		<material name="sns-brown" rgba="0.57647059 0.47058824 0.37647059 1"/>
+		<material name="sns-pink" rgba="0.85490196 0.54509804 0.76470588 1"/>
+		<material name="sns-grey" rgba="0.54901961 0.54901961 0.54901961 1"/>
+		<material name="sns-gold" rgba="0.8        0.7254902  0.45490196 1"/>
+		<material name="sns-light-blue" rgba="0.39215686 0.70980392 0.80392157 1"/>
+
 	</asset>
 	<default class="main">
 		<default class="primary">
-			<geom type="mesh" material="dark_blue" contype="0" conaffinity="0"/>
+			<geom type="mesh" material="sns-blue" contype="0" conaffinity="0"/>
 		</default>
 		<default class="secondary">
-			<geom type="mesh" material="yellow" contype="0" conaffinity="0"/>
+			<geom type="mesh" material="sns-green" contype="0" conaffinity="0"/>
 		</default>
 		<default class="slider">
 			<joint axis="0 1 0" limited="true" damping="1" armature="0" type="slide"/>
 			<motor ctrlrange="-1. 1." ctrllimited="true"/>
-			<geom type="mesh" material="dark_blue" contype="0" conaffinity="0"/>
+			<geom type="mesh" material="sns-purple" contype="0" conaffinity="0"/>
 		</default>
 		<default class="clamp">
 			<joint type="slide" axis="1 0 0" range="0 0.003921" limited="true" damping="1" armature="0"/>
 			<motor ctrlrange="-1. 1." ctrllimited="true"/>
-			<geom type="mesh" material="red" contype="0" conaffinity="0"/>
+			<geom type="mesh" material="sns-orange" contype="0" conaffinity="0"/>
 		</default>
 		<default class="wheel_up">
 			<joint type="hinge" axis="0 -1 0" limited="false"/>
 			<motor ctrlrange="-1. 1." ctrllimited="true"/>
-			<geom type="mesh" material="silver" contype="0" conaffinity="0"/>
+			<geom type="mesh" material="sns-grey" contype="0" conaffinity="0"/>
 		</default>
 		<default class="wheel_low" >
 			<joint type="hinge" axis="0 1 0" limited="false" />
 			<motor ctrlrange="-1. 1." ctrllimited="true"/>
-			<geom type="mesh" material="silver" contype="0" conaffinity="0"/>
+			<geom type="mesh" material="sns-grey" contype="0" conaffinity="0"/>
 		</default>
 	</default>
 	<worldbody>
@@ -102,8 +115,8 @@
 				</body>
 				<!-- rail_upper -->
 				<body name="rail_upper_body">
-					<geom type="mesh" mesh="rail_upper" material="yellow" contype="0" conaffinity="0"/>
-					<geom type="mesh" mesh="rail_upper_support" material="dark_blue" contype="0" conaffinity="0"/>
+					<geom type="mesh" mesh="rail_upper" material="sns-green" contype="0" conaffinity="0"/>
+					<geom type="mesh" mesh="rail_upper_support" material="sns-blue" contype="0" conaffinity="0"/>
 
 					<body name="slider_upper_body">
 						<joint name="slider_upper" range="-0.04891 0" class="slider"/>

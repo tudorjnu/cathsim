@@ -1,4 +1,4 @@
-<mujoco>
+<mujoco model="phantom_1">
 	<compiler meshdir="meshes"/>
 	<default>
 		<default class="phantom">
@@ -478,7 +478,7 @@
 		<mesh file="phantom_2/Phantom_4_hull_469.stl"/>
 	</asset>
 	<worldbody>
-		<body name="Phantom" pos="−0.001475 0 0">
+		<body name="Phantom" pos="−0.001475 -.02 0">
 			<geom type="mesh" mesh="Phantom_4" class="phantom" rgba=".99 .15 .15 0.3" contype="0" conaffinity="0"/>
 			<geom type="mesh" mesh="Phantom_4_hull_1" class="phantom"/>
 			<geom type="mesh" mesh="Phantom_4_hull_2" class="phantom"/>

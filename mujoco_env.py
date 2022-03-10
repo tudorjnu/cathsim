@@ -16,7 +16,7 @@ except ImportError as e:
         )
     )
 
-DEFAULT_SIZE = 1000
+DEFAULT_SIZE = 256
 
 
 def convert_observation_to_space(observation):
@@ -30,9 +30,15 @@ def convert_observation_to_space(observation):
             )
         )
     elif isinstance(observation, np.ndarray):
-        low = np.full(observation.shape, -float("inf"), dtype=np.float32)
-        high = np.full(observation.shape, float("inf"), dtype=np.float32)
-        space = spaces.Box(low, high, dtype=observation.dtype)
+        if len(observation.shape) == 1:
+            low = np.full(observation.shape, -float("inf"), dtype=np.float32)
+            high = np.full(observation.shape, float("inf"), dtype=np.float32)
+            space = spaces.Box(low, high, dtype=observation.dtype)
+        else:
+            space = spaces.Box(low=0, high=255,
+                               shape=observation.shape,
+                               dtype=np.uint8)
+
     else:
         raise NotImplementedError(type(observation), observation)
 
@@ -198,3 +204,34 @@ class MujocoEnv(gym.Env):
 
     def state_vector(self):
         return np.concatenate([self.sim.data.qpos.flat, self.sim.data.qvel.flat])
+
+    def get_camera_matrix(self, camera_name,
+                          height=DEFAULT_SIZE,
+                          width=DEFAULT_SIZE):
+        """ calculates the camera matrix for a camera """
+        camera_id = self.sim.model.camera_name2id(camera_name)
+        # camera parameters
+        fov = self.sim.model.cam_fovy[camera_id]
+        pos = self.sim.data.get_camera_xpos(camera_name)
+        rot = self.sim.data.get_camera_xmat(camera_name)
+
+        # Translation matrix (4x4).
+        translation = np.eye(4)
+        translation[0:3, 3] = -pos
+
+        # Rotation matrix (4x4).
+        rotation = np.eye(4)
+        rotation[0:3, 0:3] = rot
+
+        # Focal transformation matrix (3x4).
+        focal_scaling = (1./np.tan(np.deg2rad(fov)/2)) * height / 2.0
+        focal = np.diag([-focal_scaling, focal_scaling, 1.0, 0])[0:3, :]
+
+        # Image matrix (3x3).
+        image = np.eye(3)
+        image[0, 2] = (width - 1) / 2.0
+        image[1, 2] = (height - 1) / 2.0
+
+        camera_matrix = image @ focal @ rotation @ translation
+
+        return camera_matrix
