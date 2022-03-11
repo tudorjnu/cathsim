@@ -37,9 +37,6 @@ class TensorboardCallback(BaseCallback):
             (force_image - self.force_image_episode)/(current_step+1)
 
         if done:
-            print(self.force_image_episode.min(),
-                  self.force_image_episode.max(),
-                  np.count_nonzero(self.force_image_episode))
 
             self.force_image_episode = (self.force_image_episode -
                                         self.force_image_episode.min())/(

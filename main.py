@@ -6,14 +6,14 @@ from stable_baselines3.common.monitor import Monitor
 from cathsim_0 import CathSimEnv
 from utils import TensorboardCallback, evaluate_env
 
-TIMESTEPS = 200_000
-EP_LENGTH = 2000
-N_EVAL = 30
+EP_LENGTH = 2048
+TIMESTEPS = EP_LENGTH * 10
+N_EVAL = 4
 
 ENV_NAME = "5_test"
 OBS_TYPE = "internal"
 TARGET = ["bca", "lcca"]
-SCENE = [1]
+SCENE = [1, 2]
 # "DDPG": DDPG, "SAC": SAC, "TD3": TD3, "ARS": ARS, "TQC": TQC, "TRPO": TRPO}
 policies = ["MlpPolicy"]
 algorithms = {"PPO": PPO}
@@ -105,4 +105,4 @@ if __name__ == "__main__":
 
     train_algorithms(algorithms, policies)
 
-    # test_algorithms(algorithms, policies=policies)
+    test_algorithms(algorithms, policies=policies)
