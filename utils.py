@@ -1,5 +1,4 @@
 import os
-
 import matplotlib.pyplot as plt
 import numpy as np
 from stable_baselines3.common.callbacks import BaseCallback
@@ -35,15 +34,31 @@ class TensorboardCallback(BaseCallback):
         self.n += 1
 
         self.force_image_episode = self.force_image_episode + \
-            (force_image - self.force_image_episode)/(current_step + 1)
+            (force_image - self.force_image_episode)/(current_step+1)
 
         if done:
+            print(self.force_image_episode.min(),
+                  self.force_image_episode.max(),
+                  np.count_nonzero(self.force_image_episode))
+
+            self.force_image_episode = (self.force_image_episode -
+                                        self.force_image_episode.min())/(
+                self.force_image_episode.max() -
+                self.force_image_episode.min())
+
             self.logger.record("force_image", Image(
                 self.force_image_episode, "HWC"),
                 exclude=("stdout", "log", "json", "csv"))
+
             self.force_image_episode = np.zeros(shape=(256, 256, 1))
 
-            plt.imsave(self.path, np.squeeze(self.force_images_mean, -1))
+            force_images_mean = (self.force_images_mean -
+                                 self.force_images_mean.min())/(
+                self.force_images_mean.max() -
+                self.force_images_mean.min())
+
+            plt.imsave(self.path, np.squeeze(
+                force_images_mean, -1), cmap="gray")
 
             self.logger.record("episode/length",  current_step)
 

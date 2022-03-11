@@ -13,7 +13,7 @@ N_EVAL = 30
 ENV_NAME = "5_test"
 OBS_TYPE = "internal"
 TARGET = ["bca", "lcca"]
-SCENE = [2]
+SCENE = [1]
 # "DDPG": DDPG, "SAC": SAC, "TD3": TD3, "ARS": ARS, "TQC": TQC, "TRPO": TRPO}
 policies = ["MlpPolicy"]
 algorithms = {"PPO": PPO}
@@ -38,15 +38,20 @@ def train_algorithms(algorithms: dict = {},
         for policy in policies:
             for scene in SCENE:
                 for target in TARGET:
-                    env = CathSimEnv(scene=scene, obs_type=OBS_TYPE,
-                                     target=target, ep_length=EP_LENGTH)
-                    env = Monitor(env)
 
                     fname = f"{algorithm_name}-{scene}-{target}-{policy}"
-                    model_path = os.path.join(MODELS_PATH, fname)
 
                     tb_cb = TensorboardCallback(heat_path=HEATMAPS_PATH,
                                                 fname=fname)
+
+                    env = CathSimEnv(scene=scene,
+                                     obs_type=OBS_TYPE,
+                                     target=target,
+                                     ep_length=EP_LENGTH)
+
+                    env = Monitor(env)
+
+                    model_path = os.path.join(MODELS_PATH, fname)
 
                     if os.path.exists(f"{model_path}.zip"):
                         print("...loading_env...")
@@ -60,6 +65,7 @@ def train_algorithms(algorithms: dict = {},
                                 reset_num_timesteps=False,
                                 tb_log_name=fname,
                                 callback=tb_cb)
+
                     model.save(model_path)
 
 
@@ -73,28 +79,30 @@ def test_algorithms(algorithms: dict = {},
         for policy in policies:
             for scene in SCENE:
                 for target in TARGET:
-                    env = CathSimEnv(scene=scene, obs_type=OBS_TYPE,
-                                     target=target, ep_length=EP_LENGTH)
 
                     fname = f"{algorithm_name}-{scene}-{target}-{policy}"
+
+                    env = CathSimEnv(scene=scene,
+                                     obs_type=OBS_TYPE,
+                                     target=target,
+                                     ep_length=EP_LENGTH)
+
                     model_path = os.path.join(MODELS_PATH, fname)
-                    model_path = os.path.join(MODELS_PATH, fname)
-                    print(model_path)
-                    print(os.path.exists(f"{model_path}.zip"))
                     if os.path.exists(f"{model_path}.zip"):
                         print(f"...loading {algorithm_name}...")
+
                         model = algorithm.load(model_path, env=env)
 
-                        results = evaluate_env(model=model, env=env,
-                                               n_episodes=n_eval,
-                                               render=render,
-                                               deterministic=False,
-                                               saving_path=RESULTS_PATH,
-                                               fname=fname)
+                        evaluate_env(model=model, env=env,
+                                     n_episodes=n_eval,
+                                     render=render,
+                                     deterministic=False,
+                                     saving_path=RESULTS_PATH,
+                                     fname=fname)
 
 
 if __name__ == "__main__":
 
-    # train_algorithms(algorithms, policies, timesteps=TIMESTEPS)
+    train_algorithms(algorithms, policies)
 
-    test_algorithms(algorithms, policies=policies)
+    # test_algorithms(algorithms, policies=policies)
