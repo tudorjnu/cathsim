@@ -5,7 +5,7 @@
 #SBATCH --mail-type=ALL
 #SBATCH -t 72:00:00
 # Request the number of nodes
-#SBATCH -p gpu -N 1 -n 6
+#SBATCH -p nodes -N 4 -n 40
 
 # Load Modules
 module purge
@@ -25,8 +25,13 @@ echo "CUDA_VISIBLE_DEVICES : $CUDA_VISIBLE_DEVICES"
 echo "GPU_DEVICE_ORDINAL   : $GPU_DEVICE_ORDINAL"
 
 echo "Running GPU jobs:"
+python train.py --algo ppo --env-name 1 --scene 1 --target bca -o internal 
 
-python main.py
+python train.py --algo ppo --env-name 1 --scene 1 --target lcca -o internal 
+
+python train.py --algo ppo --env-name 1 --scene 2 --target bca -o internal 
+
+python train.py --algo ppo --env-name 1 --scene 2 --target lcca -o internal 
 
 #deactivate the gpu virtual environment
 conda deactivate

@@ -3,7 +3,24 @@ import matplotlib.pyplot as plt
 import numpy as np
 from stable_baselines3.common.callbacks import BaseCallback
 from stable_baselines3.common.logger import Image
+from stable_baselines3 import A2C, DDPG, DQN, PPO, SAC, TD3
+from sb3_contrib import ARS, QRDQN, TQC, TRPO
+
 from tqdm import trange
+
+ALGOS = {
+    "a2c": A2C,
+    "ddpg": DDPG,
+    "dqn": DQN,
+    "ppo": PPO,
+    "sac": SAC,
+    "td3": TD3,
+    # SB3 Contrib,
+    "ars": ARS,
+    "qrdqn": QRDQN,
+    "tqc": TQC,
+    "trpo": TRPO,
+}
 
 
 class TensorboardCallback(BaseCallback):

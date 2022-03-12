@@ -16,7 +16,7 @@ TARGET = ["bca", "lcca"]
 SCENE = [1, 2]
 # "DDPG": DDPG, "SAC": SAC, "TD3": TD3, "ARS": ARS, "TQC": TQC, "TRPO": TRPO}
 POLICIES = ["MlpPolicy"]
-ALGORITHMS = {"PPO":PPO,"A2C":A2C}
+ALGORITHMS = {"PPO": PPO, "A2C": A2C}
 
 SAVING_PATH = f"./benchmarking/{ENV_NAME}"
 MODELS_PATH = os.path.join(SAVING_PATH, "models", OBS_TYPE)
@@ -63,7 +63,7 @@ def train_algorithms(algorithms: dict = ALGORITHMS,
                         model = algorithm.load(model_path, env=env)
                     else:
                         model = algorithm(policy, env,
-					  policy_kwargs=policy_kwargs,
+                                          policy_kwargs=policy_kwargs,
                                           verbose=1,
                                           tensorboard_log=LOGS_PATH)
 
