@@ -1,37 +1,40 @@
 import os
-
-from stable_baselines3 import A2C, PPO
-from stable_baselines3.common.monitor import Monitor
-
 from cathsim_0 import CathSimEnv
 from utils import TensorboardCallback, evaluate_env
 
-EP_LENGTH = 2048
-TIMESTEPS = EP_LENGTH * 10
-N_EVAL = 4
+from stable_baselines3 import A2C, PPO
+from stable_baselines3.common.monitor import Monitor
+from stable_baselines3.common.callbacks import CheckpointCallback
 
-ENV_NAME = "5_test"
+EP_LENGTH = 2048
+TIMESTEPS = EP_LENGTH * 100
+SAVE_FREQ = round(TIMESTEPS/10)
+N_EVAL = 30
+
+ENV_NAME = "1"
 OBS_TYPE = "internal"
 TARGET = ["bca", "lcca"]
 SCENE = [1, 2]
 # "DDPG": DDPG, "SAC": SAC, "TD3": TD3, "ARS": ARS, "TQC": TQC, "TRPO": TRPO}
-policies = ["MlpPolicy"]
-algorithms = {"PPO": PPO}
+POLICIES = ["MlpPolicy"]
+ALGORITHMS = {"PPO": PPO}
 
 SAVING_PATH = f"./benchmarking/{ENV_NAME}"
 MODELS_PATH = os.path.join(SAVING_PATH, "models", OBS_TYPE)
+CKPT_PATH = os.path.join(SAVING_PATH, "ckpt", OBS_TYPE)
 LOGS_PATH = os.path.join(SAVING_PATH, "logs", OBS_TYPE)
 RESULTS_PATH = os.path.join(SAVING_PATH, "results", OBS_TYPE)
 HEATMAPS_PATH = os.path.join(SAVING_PATH, "heatmaps", OBS_TYPE)
-for path in [MODELS_PATH, LOGS_PATH, RESULTS_PATH, HEATMAPS_PATH]:
+
+for path in [MODELS_PATH, LOGS_PATH, CKPT_PATH, RESULTS_PATH, HEATMAPS_PATH]:
     os.makedirs(path, exist_ok=True)
 
 # MODEL
 policy_kwargs = dict(net_arch=[dict(pi=[128, 128], vf=[128, 128])])
 
 
-def train_algorithms(algorithms: dict = {},
-                     policies: list = [],
+def train_algorithms(algorithms: dict = ALGORITHMS,
+                     policies: list = POLICIES,
                      timesteps: int = TIMESTEPS):
 
     for algorithm_name, algorithm in algorithms.items():
@@ -44,6 +47,9 @@ def train_algorithms(algorithms: dict = {},
                     tb_cb = TensorboardCallback(heat_path=HEATMAPS_PATH,
                                                 fname=fname)
 
+                    ckpt_cb = CheckpointCallback(save_freq=SAVE_FREQ,
+                                                 save_path=CKPT_PATH,
+                                                 name_prefix=fname)
                     env = CathSimEnv(scene=scene,
                                      obs_type=OBS_TYPE,
                                      target=target,
@@ -61,16 +67,17 @@ def train_algorithms(algorithms: dict = {},
                                           policy_kwargs=policy_kwargs,
                                           verbose=1,
                                           tensorboard_log=LOGS_PATH)
+
                     model.learn(total_timesteps=timesteps,
                                 reset_num_timesteps=False,
                                 tb_log_name=fname,
-                                callback=tb_cb)
+                                callback=[tb_cb, ckpt_cb])
 
                     model.save(model_path)
 
 
-def test_algorithms(algorithms: dict = {},
-                    policies: list = [],
+def test_algorithms(algorithms: dict = ALGORITHMS,
+                    policies: list = POLICIES,
                     n_eval: int = 30,
                     render: bool = False,
                     verbose: bool = True):
@@ -103,6 +110,5 @@ def test_algorithms(algorithms: dict = {},
 
 if __name__ == "__main__":
 
-    train_algorithms(algorithms, policies)
-
-    test_algorithms(algorithms, policies=policies)
+    train_algorithms()
+    test_algorithms()
