@@ -10,13 +10,13 @@ TIMESTEPS = EP_LENGTH * 100
 SAVE_FREQ = round(TIMESTEPS/10)
 N_EVAL = 30
 
-ENV_NAME = "1_gpu"
-OBS_TYPE = "internal"
+ENV_NAME = "1"
+OBS_TYPE = "image"
 TARGET = ["bca", "lcca"]
 SCENE = [1, 2]
 # "DDPG": DDPG, "SAC": SAC, "TD3": TD3, "ARS": ARS, "TQC": TQC, "TRPO": TRPO}
 POLICIES = ["MlpPolicy"]
-ALGORITHMS = {"PPO": PPO, "A2C": A2C}
+ALGORITHMS = {"ppo": PPO, "a2c": A2C}
 
 SAVING_PATH = f"./benchmarking/{ENV_NAME}"
 MODELS_PATH = os.path.join(SAVING_PATH, "models", OBS_TYPE)
@@ -29,7 +29,7 @@ for path in [MODELS_PATH, LOGS_PATH, CKPT_PATH, RESULTS_PATH, HEATMAPS_PATH]:
     os.makedirs(path, exist_ok=True)
 
 # MODEL
-policy_kwargs = dict(net_arch=[dict(pi=[128, 128], vf=[128, 128])])
+# policy_kwargs = dict(net_arch=[dict(pi=[128, 128], vf=[128, 128])])
 
 
 def train_algorithms(algorithms: dict = ALGORITHMS,
@@ -63,7 +63,7 @@ def train_algorithms(algorithms: dict = ALGORITHMS,
                         model = algorithm.load(model_path, env=env)
                     else:
                         model = algorithm(policy, env,
-                                          policy_kwargs=policy_kwargs,
+                                          # policy_kwargs=policy_kwargs,
                                           verbose=1,
                                           tensorboard_log=LOGS_PATH)
 
@@ -110,4 +110,4 @@ def test_algorithms(algorithms: dict = ALGORITHMS,
 if __name__ == "__main__":
 
     train_algorithms()
-    test_algorithms()
+    # test_algorithms()
