@@ -30,10 +30,9 @@
 ##SBATCH --mail-user=sgtjianu@liverpool.ac.uk
 # Notify user by email when certain event types occur
 #SBATCH --mail-type=ALL
-#
 # Set your maximum stack size to unlimited
 ulimit -s unlimited
-# Set OpenMP thread number
+
 export OMP_NUM_THREADS=$SLURM_NTASKS
 
 
@@ -58,7 +57,7 @@ echo "GPU_DEVICE_ORDINAL   : $GPU_DEVICE_ORDINAL"
 
 echo "Running GPU jobs:"
 
-echo "Running GPU job tf_test_graph.py:"
+echo "Running GPU job train.py:"
 python train.py --algo ppo --env-name 1 --scene 1 --target bca -o internal -n 12288 
 
 #echo "Running GPU job tf_benchmark_sky_alexnet.py:"
