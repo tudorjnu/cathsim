@@ -5,7 +5,12 @@
 #SBATCH --mail-type=ALL
 #SBATCH -t 72:00:00
 # Request the number of nodes
-#SBATCH -p nodes -N 4 -n 40
+#SBATCH -p nodes -N 2 -n 80
+#SBATCH --export-ALL
+
+ulimit -s unlimited
+
+export OMP_NUM_THREADS=$SLURM_NTASKS
 
 # Load Modules
 module purge
@@ -33,6 +38,13 @@ python train.py --algo ppo --env-name 1 --scene 2 --target bca -o internal
 
 python train.py --algo ppo --env-name 1 --scene 2 --target lcca -o internal 
 
+python train.py --algo a2c --env-name 1 --scene 1 --target bca -o internal 
+
+python train.py --algo a2c --env-name 1 --scene 1 --target lcca -o internal 
+
+python train.py --algo  --env-name 1 --scene 2 --target bca -o internal 
+
+python train.py --algo  --env-name 1 --scene 2 --target lcca -o internal 
 #deactivate the gpu virtual environment
 conda deactivate
 
