@@ -11,12 +11,12 @@ SAVE_FREQ = round(TIMESTEPS/10)
 N_EVAL = 30
 
 ENV_NAME = "1"
-OBS_TYPE = "image"
+OBS_TYPE = "internal"
 TARGET = ["bca", "lcca"]
 SCENE = [1, 2]
 # "DDPG": DDPG, "SAC": SAC, "TD3": TD3, "ARS": ARS, "TQC": TQC, "TRPO": TRPO}
 POLICIES = ["MlpPolicy"]
-ALGORITHMS = {"ppo": PPO, "a2c": A2C}
+ALGORITHMS = {"ppo": PPO}
 
 SAVING_PATH = f"./benchmarking/{ENV_NAME}"
 MODELS_PATH = os.path.join(SAVING_PATH, "models", OBS_TYPE)
@@ -110,4 +110,4 @@ def test_algorithms(algorithms: dict = ALGORITHMS,
 if __name__ == "__main__":
 
     train_algorithms()
-    # test_algorithms()
+    test_algorithms()

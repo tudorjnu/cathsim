@@ -1,6 +1,6 @@
 from stable_baselines3.common.callbacks import CheckpointCallback
 from stable_baselines3.common.monitor import Monitor
-from utils import TensorboardCallback, evaluate_env, ALGOS
+from utils import TensorboardCallback, ALGOS
 from cathsim_0 import CathSimEnv
 import os
 import argparse
@@ -36,6 +36,9 @@ if __name__ == "__main__":
     ap.add_argument("-S", "--saving-path", required=False, default="./benchmarking/",
                     help="saving path", type=str)
 
+    ap.add_argument("-d", "--device", required=False, default="cpu",
+                    type=str, choices=["cpu", "cuda"])
+
     args = vars(ap.parse_args())
 
     ep_len = args["ep_len"]
@@ -62,7 +65,7 @@ if __name__ == "__main__":
         os.makedirs(path, exist_ok=True)
 
     # MODEL
-    policy_kwargs = dict(net_arch=[dict(pi=[128, 128], vf=[128, 128])])
+    # policy_kwargs = dict(net_arch=[dict(pi=[128, 128], vf=[128, 128])])
 
     fname = f"{algo_name}-{scene}-{target}-{policy}"
 
@@ -87,8 +90,9 @@ if __name__ == "__main__":
         model = algo.load(model_path, env=env)
     else:
         model = algo(policy, env,
-                     policy_kwargs=policy_kwargs,
+                     # policy_kwargs=policy_kwargs,
                      verbose=1,
+                     device=args["device"],
                      tensorboard_log=LOGS_PATH)
 
         model.learn(total_timesteps=timesteps,
