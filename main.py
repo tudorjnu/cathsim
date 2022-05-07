@@ -1,22 +1,25 @@
 import os
 from cathsim_0 import CathSimEnv
 from utils import TensorboardCallback, evaluate_env
-from stable_baselines3 import A2C, PPO, SAC
-from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.callbacks import CheckpointCallback
+from utils import ALGOS
+from stable_baselines3.common.env_util import make_vec_env
+from stable_baselines3.common.vec_env import SubprocVecEnv
 
 EP_LENGTH = 3072
-TIMESTEPS = EP_LENGTH * 100
+TIMESTEPS = EP_LENGTH * 200
 SAVE_FREQ = round(TIMESTEPS/10)
 N_EVAL = 30
 
-ENV_NAME = "1"
-OBS_TYPE = "internal"
+ENV_NAME = "3"
+N_ENVS = 4
+OBS_TYPE = "image"
 TARGET = ["bca", "lcca"]
 SCENE = [1, 2]
-# "DDPG": DDPG, "SAC": SAC, "TD3": TD3, "ARS": ARS, "TQC": TQC, "TRPO": TRPO}
 POLICIES = ["MlpPolicy"]
-ALGORITHMS = {"ppo": PPO}
+algo = "ppo"
+ALGORITHMS = {f"{algo}": ALGOS[f"{algo}"]}
+
 
 SAVING_PATH = f"./benchmarking/{ENV_NAME}"
 MODELS_PATH = os.path.join(SAVING_PATH, "models", OBS_TYPE)
@@ -54,7 +57,8 @@ def train_algorithms(algorithms: dict = ALGORITHMS,
                                      target=target,
                                      ep_length=EP_LENGTH)
 
-                    env = Monitor(env)
+                    env = make_vec_env(
+                        lambda: env, n_envs=N_ENVS, vec_env_cls=SubprocVecEnv)
 
                     model_path = os.path.join(MODELS_PATH, fname)
 
@@ -63,14 +67,13 @@ def train_algorithms(algorithms: dict = ALGORITHMS,
                         model = algorithm.load(model_path, env=env)
                     else:
                         model = algorithm(policy, env,
-                                          # policy_kwargs=policy_kwargs,
                                           verbose=1,
                                           tensorboard_log=LOGS_PATH)
 
                     model.learn(total_timesteps=timesteps,
                                 reset_num_timesteps=False,
                                 tb_log_name=fname,
-                                callback=[tb_cb, ckpt_cb])
+                                callback=[tb_cb])
 
                     model.save(model_path)
 
@@ -109,5 +112,5 @@ def test_algorithms(algorithms: dict = ALGORITHMS,
 
 if __name__ == "__main__":
 
-    train_algorithms()
+    # train_algorithms()
     test_algorithms()

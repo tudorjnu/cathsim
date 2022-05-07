@@ -4,6 +4,7 @@ import mujoco_py
 import numpy as np
 from gym import utils
 from stable_baselines3.common.env_checker import check_env
+from utils import ALGOS
 from tqdm import trange
 
 import mujoco_env
@@ -13,13 +14,14 @@ EPISODES = 10
 STEPS = 20000
 DEFAULT_IMAGE_SIZE = 256
 TIMESTEPS = 300000
-EP_LENGTH = 1000
+EP_LENGTH = 3075
 OBS_TYPE = "internal"
 TARGETS = {1: {"bca": [-0.029918, 0.055143, 1.0431],
                "lcca": [0.003474, 0.055143, 1.0357]},
            2: {'bca': [-0.013049, -0.077002, 1.0384],
-               'lcca': [0.019936, -0.048568, 1.0315]}}
-
+               'lcca': [0.019936, -0.048568, 1.0315]},
+           3: {"bca": [-0.029918, 0.055143, 1.0431],
+               "lcca": [0.003474, 0.055143, 1.0357]}}
 SCENE = 1
 TARGET = "bca"
 
@@ -79,6 +81,10 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         )
 
         self.obs_type = obs_type
+
+        if self.obs_type == "image_time":
+            self.obs = np.zeros(
+                shape=(DEFAULT_IMAGE_SIZE, DEFAULT_IMAGE_SIZE, 3))
 
         """ Inherits from MujocoEnv """
 
@@ -186,6 +192,11 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
         if self.obs_type == "image":
             obs = self.get_image("top_view", mode="gray")
+        elif self.obs_type == "image_time":
+            image = self.get_image("top_view", mode="gray")
+            np.append(self.obs, image, axis=-1)
+            np.delete(self.obs, 0, -1)
+            return self.obs
         else:
             data = self.sim.data
 
@@ -245,19 +256,25 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
 
 if __name__ == "__main__":
+    algo_path = "/home/tudorjnu/Github/cathsim/benchmarking/3/models/image/ppo-2-bca-MlpPolicy.zip"
+    model = ALGOS["ppo"]
+    env = CathSimEnv(scene=1,
+                     obs_type="internal",
+                     ep_length=3072,
+                     target="lcca")
 
-    env = CathSimEnv(scene=2)
-    test_env(env)
-    for episode in trange(EPISODES):
+    model = model.load(algo_path, env=env)
+
+    for _ in trange(2):
         obs = env.reset()
+        print(obs.shape)
         done = False
         while not done:
             # env.render()
-            image = env.get_image("top_view")
-            plt.imshow(image)
-            plt.show()
-            action = env.action_space.sample()
-            observation, reward, done, info = env.step(action)
-            # print(reward)
+            action, _state = model.predict(obs)
+            obs, reward, done, info = env.step(action)
+        # env.render()
+        # action = env.action_space.sample()
+        # observation, reward, done, info = env.step(action)
 
-    env.close()
+    # env.close()

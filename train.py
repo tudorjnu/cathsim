@@ -1,6 +1,7 @@
 from stable_baselines3.common.callbacks import CheckpointCallback
-from stable_baselines3.common.monitor import Monitor
-from utils import TensorboardCallback, ALGOS
+from stable_baselines3.common.env_util import make_vec_env
+from stable_baselines3.common.vec_env import SubprocVecEnv
+from utils import TensorboardCallback,  ALGOS
 from cathsim_0 import CathSimEnv
 import os
 import argparse
@@ -22,7 +23,7 @@ if __name__ == "__main__":
                     help="Environment Name", type=str)
 
     ap.add_argument("-s", "--scene", required=False, default=1,
-                    help="scene number", type=int, choices=[1, 2])
+                    help="scene number", type=int, choices=[1, 2, 3])
 
     ap.add_argument("-t", "--target", required=False, default="bca",
                     help="cannulation target", type=str, choices=["bca", "lcca"])
@@ -38,6 +39,9 @@ if __name__ == "__main__":
 
     ap.add_argument("-d", "--device", required=False, default="cpu",
                     type=str, choices=["cpu", "cuda"])
+
+    ap.add_argument("--n-env", required=False, default=1,
+                    help="Number of Environments", type=int)
 
     args = vars(ap.parse_args())
 
@@ -81,7 +85,8 @@ if __name__ == "__main__":
                      target=target,
                      ep_length=ep_len)
 
-    env = Monitor(env)
+    env = make_vec_env(
+        lambda: env, n_envs=args["n_env"], vec_env_cls=SubprocVecEnv)
 
     model_path = os.path.join(MODELS_PATH, fname)
 
