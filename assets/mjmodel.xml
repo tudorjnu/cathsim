@@ -1,6 +1,5 @@
 <mujoco model="Catheter">
     <compiler angle="degree" />
-    <size njmax="500" nconmax="500" />
     <default class="main">
         <default class="catheter">
             <motor ctrllimited="true"  forcelimited="true" ctrlrange="-1 1" forcerange="-1 1" />
