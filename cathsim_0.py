@@ -1,4 +1,5 @@
 import cv2
+import time
 import matplotlib.pyplot as plt
 import mujoco_py
 import numpy as np
@@ -36,7 +37,6 @@ def test_env(env):
     print("Shape:", env.observation_space.shape)
     print("Action space:", env.action_space)
     action = env.action_space.sample()
-    # print("Sampled action:", action)
     obs, reward, done, info = env.step(action)
     print("obs_shape:", obs.shape, "\nreward:", reward, "\ndone:", done)
     for key, value in info.items():
@@ -254,27 +254,45 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
         return image
 
+    def print_info(self, link=-1):
+        print("Position: ", self.data.qpos[link])
+        print("Velocity: ", self.data.qvel[link])
+        print("COM Inertia: ", self.data.cinert[link])
+        print("COM Velocity: ", self.data.cvel[link])
+        print("Actuator Forces: ", self.data.qfrc_actuator[link].shape)
+
 
 if __name__ == "__main__":
-    algo_path = "/home/tudorjnu/Github/cathsim/benchmarking/3/models/image/ppo-2-bca-MlpPolicy.zip"
-    model = ALGOS["ppo"]
     env = CathSimEnv(scene=1,
                      obs_type="internal",
                      ep_length=3072,
                      target="lcca")
+    obs = env.reset()
 
-    model = model.load(algo_path, env=env)
+    print("Degrees of Freedom:", env.model.nv)
+    print("Number of joints:", env.model.nq)
+    print("Number of actuators:", env.model.na)
+    print("Number of bodies:", env.model.nbody)
+
+    print("Position:", env.sim.data.qpos.shape)
+    print(env.sim.data.qpos[0])
+    print("Velocity:", env.sim.data.qvel.shape)
+    print(env.sim.data.qvel[0])
+
+    print("COM inertia:", env.sim.data.cinert.shape)
+    print(env.sim.data.cinert[0])
+    print("COM velocity:", env.sim.data.cvel.shape)
+    print(env.sim.data.cvel[0])
 
     for _ in trange(2):
         obs = env.reset()
-        print(obs.shape)
         done = False
         while not done:
-            # env.render()
-            action, _state = model.predict(obs)
+            env.print_info()
+            # time.sleep(2)
+            env.render()
+            action = env.action_space.sample()
+            print("Action:", action)
             obs, reward, done, info = env.step(action)
-        # env.render()
-        # action = env.action_space.sample()
-        # observation, reward, done, info = env.step(action)
 
-    # env.close()
+    env.close()
