@@ -45,7 +45,7 @@ def convert_observation_to_space(observation):
     return space
 
 
-class MujocoEnv(gym.Env):
+class MujocoEnv(gym.GoalEnv):
     """Superclass for all MuJoCo environments."""
 
     def __init__(self, model_path, frame_skip):

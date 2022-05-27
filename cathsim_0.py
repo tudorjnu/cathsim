@@ -290,7 +290,7 @@ if __name__ == "__main__":
         while not done:
             env.print_info()
             # time.sleep(2)
-            env.render()
+            # env.render()
             action = env.action_space.sample()
             print("Action:", action)
             obs, reward, done, info = env.step(action)
