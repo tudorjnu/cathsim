@@ -10,8 +10,8 @@ from stable_baselines3 import HerReplayBuffer
 from utils import ALGOS, TensorboardCallback
 import mujoco_env_her as mujoco_env
 
-TARGETS = {1: {"bca": np.array([-0.029918, 0.055143, 1.0431]),
-               "lcca": np.array([0.003474, 0.055143, 1.0357])},
+TARGETS = {1: {"bca": np.array([-0.029918, 0.035143, 1.0431]),
+               "lcca": np.array([0.003474, 0.035143, 1.0357])},
            2: {'bca': np.array([-0.013049, -0.077002, 1.0384]),
                'lcca': np.array([0.019936, -0.048568, 1.0315])}}
 
@@ -25,7 +25,6 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
     def __init__(self,
                  scene: int = 1,
                  obs_type: str = "internal",
-                 ep_length: int = 3000,
                  image_size: int = 128,
                  delta: float = 0.008,
                  dense_reward: bool = False,
@@ -34,7 +33,6 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         self.scene = scene
         self.desired_goal = TARGETS[scene]["bca"]
         self.obs_type = obs_type
-        self.ep_length = ep_length
         self.image_size = image_size
         self.delta = delta
         self.dense_reward = dense_reward
@@ -44,9 +42,6 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
         xml_file = f'scene_{scene}.xml'
         self.image_size = image_size
-
-        self.current_step = 1
-        self.num_resets = -1
 
         if self.obs_type == "image_time":
             self.obs = np.zeros(
@@ -95,7 +90,7 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         Computes the reward for the given achieved goal and desired goal.
         """
         distance = np.linalg.norm(achieved_goal - desired_goal)
-        success = distance <= self.delta
+        success = bool(distance <= self.delta)
 
         self.done = bool(success)
 
@@ -108,7 +103,7 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
     @property
     def head_pos(self):
-        head_pos = self.sim.data.get_body_xpos("B99")
+        head_pos = self.sim.data.get_body_xpos("head")
         head_pos = np.array(head_pos)
         return head_pos
 
@@ -174,9 +169,6 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         desired_goal = TARGETS[self.scene][targets[random.randint(0, 1)]]
         self.desired_goal = np.array(desired_goal)
 
-        self.current_step = 0
-        self.num_resets += 1
-
         return self._get_obs()
 
     def point2pixel(self, point, camera_matrix):
@@ -204,8 +196,7 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 if __name__ == "__main__":
     env = CathSimEnv(scene=1,
                      obs_type="internal",
-                     dense_reward=False,
-                     ep_length=1500)
+                     dense_reward=False)
     print("Observation: ", env.observation_space["observation"])
     print("Achived Goal: ", env.observation_space["achieved_goal"])
     print("Desired Goal: ", env.observation_space["desired_goal"])
@@ -213,11 +204,8 @@ if __name__ == "__main__":
 
     check_env(env, warn=True)
 
-    # env = make_vec_env(
-    # lambda: env, n_envs=4, vec_env_cls=SubprocVecEnv)
     algorithm = ALGOS["ddpg"]
 
-    # SAC hyperparams:
     model = algorithm(
         "MultiInputPolicy",
         env,
