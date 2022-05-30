@@ -1,29 +1,21 @@
-import mujoco_env
-from tqdm import trange
-from utils import ALGOS
-from stable_baselines3.common.env_checker import check_env
-from gym import utils
-import numpy as np
-import mujoco_py
-import cv2
-from collections import OrderedDict
-from gym.envs.registration import EnvSpec
-from stable_baselines3.common.noise import NormalActionNoise
 import random
-from stable_baselines3 import HerReplayBuffer, SAC, DDPG, TD3
+import cv2
+import mujoco_py
+import numpy as np
+from gym import utils
+from gym.wrappers import TimeLimit
+from stable_baselines3.common.env_checker import check_env
+from stable_baselines3.common.env_util import make_vec_env
+from stable_baselines3.common.vec_env import SubprocVecEnv
+from collections import OrderedDict
+from stable_baselines3 import HerReplayBuffer, HER
+from utils import ALGOS, TensorboardCallback
+import mujoco_env_her as mujoco_env
 
-
-IMAGES_SAVING_INTERVAL = 500
-EPISODES = 10
-STEPS = 20000
-DEFAULT_IMAGE_SIZE = 256
-TIMESTEPS = 300000
-EP_LENGTH = 3075
-OBS_TYPE = "internal"
-TARGETS = {1: {"bca": [-0.029918, 0.055143, 1.0431],
-               "lcca": [0.003474, 0.055143, 1.0357]},
-           2: {'bca': [-0.013049, -0.077002, 1.0384],
-               'lcca': [0.019936, -0.048568, 1.0315]}}
+TARGETS = {1: {"bca": np.array([-0.029918, 0.055143, 1.0431]),
+               "lcca": np.array([0.003474, 0.055143, 1.0357])},
+           2: {'bca': np.array([-0.013049, -0.077002, 1.0384]),
+               'lcca': np.array([0.019936, -0.048568, 1.0315])}}
 
 DEFAULT_CAMERA_CONFIG = {
     "pos": [0.007738, - 0.029034, 1.550]
@@ -34,36 +26,46 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
     def __init__(self,
                  scene: int = 1,
-                 obs_type: str = "internal"):
+                 obs_type: str = "internal",
+                 ep_length: int = 3000,
+                 image_size: int = 128,
+                 delta: float = 0.008,
+                 dense_reward: bool = True,
+                 success_reward: float = 0.0):
 
-        self.spec = EnvSpec("CathSimEnv-v0")
+        self.scene = scene
+        self.desired_goal = TARGETS[scene]["bca"]
+        self.obs_type = obs_type
+        self.ep_length = ep_length
+        self.image_size = image_size
+        self.delta = delta
+        self.dense_reward = dense_reward
+        self.success_reward = success_reward
 
         utils.EzPickle.__init__(self)
 
-        self.scene = scene
         xml_file = f'scene_{scene}.xml'
+        self.image_size = image_size
 
-        self.obs_type = obs_type
-        self.desired_goal = np.array(TARGETS[scene]["bca"])
+        self.current_step = 1
+        self.num_resets = -1
 
         if self.obs_type == "image_time":
             self.obs = np.zeros(
-                shape=(DEFAULT_IMAGE_SIZE, DEFAULT_IMAGE_SIZE, 3))
+                shape=(image_size, image_size, 3))
 
         """ Inherits from MujocoEnv """
 
-        mujoco_env.MujocoEnv.__init__(self, xml_file, 5)
+        mujoco_env.MujocoEnv.__init__(self, xml_file, 5, image_size)
 
-        self.top_camera_matrix = self.get_camera_matrix("top_view")
-
-    @ property
+    @property
     def force_image(self):
         """ computes the force and maps it to an image """
         image_range = 2
 
         data = self.sim.data
         force_image = np.zeros(
-            shape=(DEFAULT_IMAGE_SIZE, DEFAULT_IMAGE_SIZE, 1))
+            shape=(self.image_size, self.image_size, 1))
 
         # for all available contacts
         for i in range(data.ncon):
@@ -84,15 +86,32 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
                                collision_pos[0]+image_range):
                     for j in range(collision_pos[1]-image_range,
                                    collision_pos[1]+image_range):
-                        if (0 <= i <= 255 and
-                                0 <= j <= 255):
+                        if (0 <= i < self.image_size and
+                                0 <= j < self.image_size):
                             force_image[j, i] = collision_force
 
         return force_image
 
-    @ property
+    def compute_reward(self, achieved_goal, desired_goal, info=None):
+        """
+        Computes the reward for the given achieved goal and desired goal.
+        """
+        distance = np.linalg.norm(achieved_goal - desired_goal)
+        success = distance <= self.delta
+
+        self.done = bool(success)
+
+        if self.dense_reward:
+            reward = self.success_reward if success else -distance
+        else:
+            reward = self.success_reward if success else -1.0
+
+        return reward
+
+    @property
     def head_pos(self):
         head_pos = self.sim.data.get_body_xpos("B99")
+        head_pos = np.array(head_pos)
         return head_pos
 
     def step(self, a):
@@ -107,20 +126,6 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         reward = self.compute_reward(obs['achieved_goal'], obs['desired_goal'])
 
         return obs, reward, self.done, {}
-
-    def compute_reward(self, achieved_goal, desired_goal, info=None, delta=0.008, dense=True):
-        """ Computes the reward """
-
-        distance = np.linalg.norm(achieved_goal - desired_goal)
-        success = distance <= delta
-        self.done = bool(success)
-
-        if dense:
-            reward = 1.0 if success else -distance
-        else:
-            reward = 1.0 if success else 0.0
-
-        return reward
 
     def _get_obs(self):
 
@@ -137,16 +142,15 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
             position = data.qpos.flat.copy()
             velocity = data.qvel.flat.copy()
 
-            com_inertia = data.cinert.flat.copy()
-
-            actuator_forces = data.qfrc_actuator.flat.copy()
+            # com_inertia = data.cinert.flat.copy()
+            # actuator_forces = data.qfrc_actuator.flat.copy()
 
             obs = np.concatenate(
                 (
                     position,
                     velocity,
-                    com_inertia,
-                    actuator_forces,
+                    # com_inertia,
+                    # actuator_forces,
                 )
             )
 
@@ -172,14 +176,16 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         desired_goal = TARGETS[self.scene][targets[random.randint(0, 1)]]
         self.desired_goal = np.array(desired_goal)
 
+        self.current_step = 0
+        self.num_resets += 1
+
         return self._get_obs()
 
     def point2pixel(self, point, camera_matrix):
         """Transforms from world coordinates to pixel coordinates."""
-
         x, y, z = point
-
         xs, ys, s = camera_matrix.dot(np.array([x, y, z, 1.0]))
+
         return round(xs/s), round(ys/s)
 
     def get_image(self, camera_name, mode="rgb"):
@@ -199,25 +205,29 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
 if __name__ == "__main__":
     env = CathSimEnv(scene=1,
-                     obs_type="internal")
+                     obs_type="internal",
+                     dense_reward=False,
+                     ep_length=1500)
     print("Observation: ", env.observation_space["observation"])
     print("Achived Goal: ", env.observation_space["achieved_goal"])
     print("Desired Goal: ", env.observation_space["desired_goal"])
-    obs = env.reset()
-    check_env(env)
+    env = TimeLimit(env, max_episode_steps=1500)
 
+    check_env(env, warn=True)
+
+    # env = make_vec_env(
+    # lambda: env, n_envs=4, vec_env_cls=SubprocVecEnv)
     algorithm = ALGOS["ddpg"]
 
+    # SAC hyperparams:
     model = algorithm(
         "MultiInputPolicy",
         env,
         replay_buffer_class=HerReplayBuffer,
         replay_buffer_kwargs=dict(
-            n_sampled_goal=1,
+            n_sampled_goal=4,
             goal_selection_strategy="future",
-            # IMPORTANT: because the env is not wrapped with a TimeLimit wrapper
-            # we have to manually specify the max number of steps per episode
-            max_episode_length=100,
+            max_episode_length=1500,
             online_sampling=True,
         ),
         verbose=1,
@@ -226,22 +236,12 @@ if __name__ == "__main__":
         gamma=0.95,
         batch_size=256,
         policy_kwargs=dict(net_arch=[256, 256, 256]),
+        seed=42
     )
 
-    model.learn(int(2e5))
-    exit()
+    fname = "./benchmarking/4/models/sac-1-bca-MlpPolicy_her"
+    HEATMAPS_PATH = "./benchmarking/heatmaps/"
+    tb_cb = TensorboardCallback(heat_path=HEATMAPS_PATH, fname=fname)
 
-    obs = env.reset()
-
-    # Evaluate the agent
-    episode_reward = 0
-    for _ in range(100):
-        action, _ = model.predict(obs, deterministic=True)
-        obs, reward, done, info = env.step(action)
-        env.render()
-        episode_reward += reward
-        if done or info.get("is_success", False):
-            print("Reward:", episode_reward, "Success?",
-                  info.get("is_success", False))
-            episode_reward = 0.0
-            obs = env.reset()
+    model.learn(total_timesteps=int(1e5), callback=[tb_cb], tb_log_name=fname)
+    model.save("cathsim_ddpg_her")
