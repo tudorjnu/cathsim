@@ -31,13 +31,15 @@ class TensorboardCallback(BaseCallback):
     def __init__(self,
                  heat_path: str,
                  fname: str,
-                 verbose: int = 0):
+                 verbose: int = 0,
+                 image_size: int = 128):
         super(TensorboardCallback, self).__init__(verbose)
 
         self.path = os.path.join(heat_path, f"{fname}.png")
+        self.image_size = image_size
 
-        self.force_images_mean = np.zeros(shape=(256, 256, 1))
-        self.force_image_episode = np.zeros(shape=(256, 256, 1))
+        self.force_images_mean = np.zeros(shape=(image_size, image_size, 1))
+        self.force_image_episode = np.zeros(shape=(image_size, image_size, 1))
         self.n = 1
 
     def _on_step(self) -> bool:
@@ -64,7 +66,8 @@ class TensorboardCallback(BaseCallback):
                 self.force_image_episode, "HWC"),
                 exclude=("stdout", "log", "json", "csv"))
 
-            self.force_image_episode = np.zeros(shape=(256, 256, 1))
+            self.force_image_episode = np.zeros(shape=(self.image_size,
+                                                       self.image_size, 1))
 
             force_images_mean = (self.force_images_mean -
                                  self.force_images_mean.min())/(

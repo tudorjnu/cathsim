@@ -613,7 +613,7 @@
         </body>
     </worldbody>
     <actuator>
-        <general name="slider_motor" joint="slider_joint" ctrllimited="true" forcelimited="true" ctrlrange="-1 1" forcerange="-0.025 0.025" />
+        <general name="slider_motor" joint="slider_joint" ctrllimited="true" forcelimited="true" ctrlrange="-1 1" forcerange="-0.015 0.015" />
 		<motor name="J0_90_motor" joint="J0_90" class="catheter"/>
 		<motor name="J1_90_motor" joint="J1_90" class="catheter"/>
 		<motor name="J0_91_motor" joint="J0_91" class="catheter"/>

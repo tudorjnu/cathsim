@@ -1,5 +1,5 @@
 <mujoco model="phantom_1">
-	<compiler angle="degree" meshdir="meshes"/>
+	<compiler meshdir="meshes"/>
 	<default>
 		<default class="phantom">
 			<geom rgba=".99 .15  .15 0" group="0"/> 

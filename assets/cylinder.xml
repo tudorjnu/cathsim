@@ -1,5 +1,5 @@
 <mujoco>
-	<compiler angle="degree" meshdir="meshes"/>
+	<compiler meshdir="meshes"/>
 	<asset>
 		<mesh file="slave/cylinder/cylinder_hull_1.stl"/>
 		<mesh file="slave/cylinder/cylinder_hull_2.stl"/>

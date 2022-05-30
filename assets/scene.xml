@@ -1,9 +1,7 @@
 <mujoco model="scene">
 	<size njmax="2000" nconmax="1000"/>
-	<compiler meshdir="meshes" texturedir="textures" angle="degree">
-		<lengthrange inttotal="10"/>
-	</compiler>
-	<option gravity="0 0 0" timestep="0.001" cone="elliptic" impratio="0.1" >
+	<compiler meshdir="meshes" angle="degree"/>
+	<option gravity="0 0 0" cone="elliptic" density="1000" viscosity="0.0009" solver="PGS" >
 		<flag frictionloss="disable"/>
     </option>
 	<asset>
