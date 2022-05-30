@@ -1,8 +1,9 @@
+from gym.wrappers import TimeLimit
 from stable_baselines3.common.callbacks import CheckpointCallback
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env import SubprocVecEnv
 from utils import TensorboardCallback,  ALGOS
-from cathsim_0 import CathSimEnv
+from cathsim import CathSimEnv
 import os
 import argparse
 
@@ -13,10 +14,10 @@ if __name__ == "__main__":
     ap.add_argument("--algo", required=False, default="ppo",
                     help="RL Algorithm", type=str, choices=list(ALGOS.keys()))
 
-    ap.add_argument("-n", "--n-timesteps", required=False, default=3072*100,
+    ap.add_argument("-n", "--n-timesteps", required=False, default=6e5,
                     help="total timesteps", type=int)
 
-    ap.add_argument("-e", "--ep-len", required=False, default=3072,
+    ap.add_argument("-e", "--ep-len", required=False, default=1500,
                     help="episode length", type=int)
 
     ap.add_argument("-E", "--env-name", required=False, default="1",
@@ -47,7 +48,6 @@ if __name__ == "__main__":
 
     ep_len = args["ep_len"]
     timesteps = args["n_timesteps"]
-    save_freq = round(timesteps/4)
     n_eval = 30
 
     algo_name = args["algo"]
@@ -76,14 +76,11 @@ if __name__ == "__main__":
     tb_cb = TensorboardCallback(heat_path=HEATMAPS_PATH,
                                 fname=fname)
 
-    ckpt_cb = CheckpointCallback(save_freq=save_freq,
-                                 save_path=CKPT_PATH,
-                                 name_prefix=fname)
-
     env = CathSimEnv(scene=scene,
                      obs_type=obs_type,
                      target=target,
                      ep_length=ep_len)
+    env = TimeLimit(env, max_episode_steps=ep_len)
 
     env = make_vec_env(
         lambda: env, n_envs=args["n_env"], vec_env_cls=SubprocVecEnv)
@@ -98,11 +95,20 @@ if __name__ == "__main__":
                      # policy_kwargs=policy_kwargs,
                      verbose=1,
                      device=args["device"],
-                     tensorboard_log=LOGS_PATH)
+                     tensorboard_log=LOGS_PATH,
+                     learning_rate=5.05041e-05,
+                     n_steps=512,
+                     clip_range=0.1,
+                     ent_coef=0.000585045,
+                     n_epochs=20,
+                     max_grad_norm=1,
+                     vf_coef=0.871923,
+                     batch_size=32,
+                     seed=42)
 
         model.learn(total_timesteps=timesteps,
                     reset_num_timesteps=False,
                     tb_log_name=fname,
-                    callback=[tb_cb, ckpt_cb])
+                    callback=[tb_cb])
 
         model.save(model_path)

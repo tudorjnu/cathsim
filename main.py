@@ -1,21 +1,19 @@
 import os
-from cathsim_0 import CathSimEnv
+from cathsim import CathSimEnv
 from utils import TensorboardCallback, evaluate_env
-from stable_baselines3.common.callbacks import CheckpointCallback
 from utils import ALGOS
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env import SubprocVecEnv
-
-EP_LENGTH = 3072
-TIMESTEPS = EP_LENGTH * 200
-SAVE_FREQ = round(TIMESTEPS/10)
+from gym.wrappers import TimeLimit
+EP_LENGTH = 2000
+TIMESTEPS = EP_LENGTH * 300
 N_EVAL = 30
 
-ENV_NAME = "3"
+ENV_NAME = "4"
 N_ENVS = 4
-OBS_TYPE = "image"
+OBS_TYPE = "internal"
 TARGET = ["bca", "lcca"]
-SCENE = [1, 2]
+SCENE = [1]
 POLICIES = ["MlpPolicy"]
 algo = "ppo"
 ALGORITHMS = {f"{algo}": ALGOS[f"{algo}"]}
@@ -30,9 +28,6 @@ HEATMAPS_PATH = os.path.join(SAVING_PATH, "heatmaps", OBS_TYPE)
 
 for path in [MODELS_PATH, LOGS_PATH, CKPT_PATH, RESULTS_PATH, HEATMAPS_PATH]:
     os.makedirs(path, exist_ok=True)
-
-# MODEL
-# policy_kwargs = dict(net_arch=[dict(pi=[128, 128], vf=[128, 128])])
 
 
 def train_algorithms(algorithms: dict = ALGORITHMS,
@@ -49,13 +44,12 @@ def train_algorithms(algorithms: dict = ALGORITHMS,
                     tb_cb = TensorboardCallback(heat_path=HEATMAPS_PATH,
                                                 fname=fname)
 
-                    ckpt_cb = CheckpointCallback(save_freq=SAVE_FREQ,
-                                                 save_path=CKPT_PATH,
-                                                 name_prefix=fname)
                     env = CathSimEnv(scene=scene,
                                      obs_type=OBS_TYPE,
                                      target=target,
                                      ep_length=EP_LENGTH)
+
+                    env = TimeLimit(env, max_episode_steps=EP_LENGTH)
 
                     env = make_vec_env(
                         lambda: env, n_envs=N_ENVS, vec_env_cls=SubprocVecEnv)
@@ -66,9 +60,20 @@ def train_algorithms(algorithms: dict = ALGORITHMS,
                         print("...loading_env...")
                         model = algorithm.load(model_path, env=env)
                     else:
-                        model = algorithm(policy, env,
-                                          verbose=1,
-                                          tensorboard_log=LOGS_PATH)
+                        model = algorithm(
+                            policy, env,
+                            verbose=1,
+                            device="cuda",
+                            tensorboard_log=LOGS_PATH,
+                            learning_rate=5.05041e-05,
+                            n_steps=512,
+                            clip_range=0.1,
+                            ent_coef=0.000585045,
+                            n_epochs=20,
+                            max_grad_norm=1,
+                            vf_coef=0.871923,
+                            batch_size=32,
+                            seed=42)
 
                     model.learn(total_timesteps=timesteps,
                                 reset_num_timesteps=False,
@@ -112,5 +117,5 @@ def test_algorithms(algorithms: dict = ALGORITHMS,
 
 if __name__ == "__main__":
 
-    # train_algorithms()
+    train_algorithms()
     test_algorithms()

@@ -5,10 +5,8 @@ import numpy as np
 from gym import utils
 from gym.wrappers import TimeLimit
 from stable_baselines3.common.env_checker import check_env
-from stable_baselines3.common.env_util import make_vec_env
-from stable_baselines3.common.vec_env import SubprocVecEnv
 from collections import OrderedDict
-from stable_baselines3 import HerReplayBuffer, HER
+from stable_baselines3 import HerReplayBuffer
 from utils import ALGOS, TensorboardCallback
 import mujoco_env_her as mujoco_env
 
@@ -30,7 +28,7 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
                  ep_length: int = 3000,
                  image_size: int = 128,
                  delta: float = 0.008,
-                 dense_reward: bool = True,
+                 dense_reward: bool = False,
                  success_reward: float = 0.0):
 
         self.scene = scene
