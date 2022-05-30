@@ -11,3 +11,4 @@ scratch.backup.ipynb
 .idea/
 .ipynb_checkpoints
 __pycache__
+MUJOCO_LOG.TXT
