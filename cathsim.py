@@ -234,11 +234,11 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 if __name__ == "__main__":
     env = CathSimEnv(scene=1,
                      obs_type="internal",
-                     ep_length=1500,
+                     ep_length=2000,
                      target="lcca",
                      image_size=128)
     print(env.observation_space)
-    env = TimeLimit(env, max_episode_steps=1000)
+    env = TimeLimit(env, max_episode_steps=2000)
     obs = env.reset()
 
     check_env(env)
