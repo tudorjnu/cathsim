@@ -9,8 +9,8 @@ from utils import ALGOS
 from tqdm import trange
 import mujoco_env
 
-TARGETS = {1: {"bca": [-0.029918, 0.055143, 1.0431],
-               "lcca": [0.003474, 0.055143, 1.0357]},
+TARGETS = {1: {"bca": [-0.029918, 0.035143, 1.0431],
+               "lcca": [0.003474, 0.035143, 1.0357]},
            2: {'bca': [-0.013049, -0.077002, 1.0384],
                'lcca': [0.019936, -0.048568, 1.0315]}}
 
@@ -47,7 +47,6 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
                  scene: int = 1,
                  target: str = "bca",
                  obs_type: str = "internal",
-                 ep_length: int = 2000,
                  image_size: int = 128,
                  delta: float = 0.008,
                  dense_reward: bool = True,
@@ -56,7 +55,6 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         self.scene = scene
         self.target = np.array(TARGETS[scene][target])
         self.obs_type = obs_type
-        self.ep_length = ep_length
         self.image_size = image_size
         self.delta = delta
         self.dense_reward = dense_reward
@@ -66,9 +64,6 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
         xml_file = f'scene_{scene}.xml'
         self.image_size = image_size
-
-        self.current_step = 1
-        self.num_resets = -1
 
         if self.obs_type == "image_time":
             self.obs = np.zeros(
@@ -129,7 +124,7 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
     @property
     def head_pos(self):
         """head_pos."""
-        head_pos = self.sim.data.get_body_xpos("B99")
+        head_pos = self.sim.data.get_body_xpos("head")
         head_pos = np.array(head_pos)
         return head_pos
 
@@ -139,16 +134,17 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
         self.do_simulation(a, self.frame_skip)
         obs = self._get_obs()
+        head_pos = self.head_pos
 
         # compute the reward
-        reward, done, distance = self.compute_reward(achieved_goal=self.head_pos,
+        reward, done, distance = self.compute_reward(achieved_goal=head_pos,
                                                      desired_goal=self.target)
 
         # check if the episode is done
-        info = {"success": done, "distance": distance}
-        done = self.current_step >= self.ep_length
-        self.done = done
-        self.current_step += 1
+        info = {"success": done,
+                "distance": distance,
+                "head_pos": head_pos,
+                "target_pos": self.target}
 
         return obs, reward, done, info
 
@@ -195,8 +191,6 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
                                                     high=0.00,
                                                     size=self.model.nv),
         )
-        self.current_step = 1
-        self.num_resets += 1
 
         return self._get_obs()
 
@@ -234,7 +228,6 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 if __name__ == "__main__":
     env = CathSimEnv(scene=1,
                      obs_type="internal",
-                     ep_length=2000,
                      target="lcca",
                      image_size=128)
     print(env.observation_space)
@@ -260,6 +253,7 @@ if __name__ == "__main__":
     print(env.sim.data.cvel[0])
 
     for _ in trange(2):
+        print(env.head_pos)
         obs = env.reset()
         done = False
         while not done:
