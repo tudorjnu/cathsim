@@ -1,5 +1,4 @@
 import cv2
-import time
 import matplotlib.pyplot as plt
 import mujoco_py
 import numpy as np
@@ -44,12 +43,11 @@ def test_env(env):
 class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
     """CathSimEnv."""
 
-
     def __init__(self,
                  scene: int = 1,
                  target: str = "bca",
                  obs_type: str = "internal",
-                 ep_length: int = 3000,
+                 ep_length: int = 2000,
                  image_size: int = 128,
                  delta: float = 0.008,
                  dense_reward: bool = True,

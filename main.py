@@ -9,10 +9,10 @@ EP_LENGTH = 2000
 TIMESTEPS = EP_LENGTH * 300
 N_EVAL = 30
 
-ENV_NAME = "4"
+ENV_NAME = "1"
 N_ENVS = 4
 OBS_TYPE = "internal"
-TARGET = ["bca", "lcca"]
+TARGET = ["lcca"]
 SCENE = [1]
 POLICIES = ["MlpPolicy"]
 algo = "ppo"
@@ -40,9 +40,6 @@ def train_algorithms(algorithms: dict = ALGORITHMS,
                 for target in TARGET:
 
                     fname = f"{algorithm_name}-{scene}-{target}-{policy}"
-
-                    tb_cb = TensorboardCallback(heat_path=HEATMAPS_PATH,
-                                                fname=fname)
 
                     env = CathSimEnv(scene=scene,
                                      obs_type=OBS_TYPE,
@@ -77,8 +74,7 @@ def train_algorithms(algorithms: dict = ALGORITHMS,
 
                     model.learn(total_timesteps=timesteps,
                                 reset_num_timesteps=False,
-                                tb_log_name=fname,
-                                callback=[tb_cb])
+                                tb_log_name=fname)
 
                     model.save(model_path)
 

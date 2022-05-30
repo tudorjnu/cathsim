@@ -1,6 +1,6 @@
 import os
 from cathsim_her import CathSimEnv
-from utils import TensorboardCallback, evaluate_env
+from utils import evaluate_env
 from utils import ALGOS
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env import SubprocVecEnv
@@ -42,9 +42,6 @@ def train_algorithms(algorithms: dict = ALGORITHMS,
 
                     fname = f"{algorithm_name}_HER-{scene}-{target}-{policy}"
 
-                    tb_cb = TensorboardCallback(heat_path=HEATMAPS_PATH,
-                                                fname=fname)
-
                     env = CathSimEnv(scene=scene,
                                      obs_type=OBS_TYPE,
                                      ep_length=EP_LENGTH)
@@ -79,8 +76,7 @@ def train_algorithms(algorithms: dict = ALGORITHMS,
 
                     model.learn(total_timesteps=timesteps,
                                 reset_num_timesteps=False,
-                                tb_log_name=fname,
-                                callback=[tb_cb])
+                                tb_log_name=fname)
 
                     model.save(model_path)
 
