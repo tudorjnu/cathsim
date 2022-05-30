@@ -7,13 +7,12 @@ from stable_baselines3.common.vec_env import SubprocVecEnv
 from stable_baselines3 import HerReplayBuffer
 from gym.wrappers import TimeLimit
 EP_LENGTH = 2000
-TIMESTEPS = EP_LENGTH * 300
+TIMESTEPS = EP_LENGTH * 100
 N_EVAL = 30
 
-ENV_NAME = "4"
-N_ENVS = 4
+ENV_NAME = "1"
 OBS_TYPE = "internal"
-TARGET = ["bca", "lcca"]
+TARGET = ["lcca"]
 SCENE = [1]
 POLICIES = ["MlpPolicy"]
 algo = "ddpg"
@@ -43,8 +42,7 @@ def train_algorithms(algorithms: dict = ALGORITHMS,
                     fname = f"{algorithm_name}_HER-{scene}-{target}-{policy}"
 
                     env = CathSimEnv(scene=scene,
-                                     obs_type=OBS_TYPE,
-                                     ep_length=EP_LENGTH)
+                                     obs_type=OBS_TYPE)
 
                     env = TimeLimit(env, max_episode_steps=EP_LENGTH)
 
