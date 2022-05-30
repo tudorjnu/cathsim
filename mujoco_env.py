@@ -16,7 +16,7 @@ except ImportError as e:
         )
     )
 
-DEFAULT_SIZE = 256
+DEFAULT_SIZE = 128
 
 
 def convert_observation_to_space(observation):
@@ -45,10 +45,10 @@ def convert_observation_to_space(observation):
     return space
 
 
-class MujocoEnv(gym.GoalEnv):
+class MujocoEnv(gym.Env):
     """Superclass for all MuJoCo environments."""
 
-    def __init__(self, model_path, frame_skip):
+    def __init__(self, model_path, frame_skip, image_size=DEFAULT_SIZE):
         if model_path.startswith("/"):
             fullpath = model_path
         else:
@@ -78,6 +78,7 @@ class MujocoEnv(gym.GoalEnv):
         assert not done
 
         self._set_observation_space(observation)
+        self.top_camera_matrix = self.get_camera_matrix("top_view")
 
         self.seed()
 
@@ -142,11 +143,10 @@ class MujocoEnv(gym.GoalEnv):
     def render(
         self,
         mode="human",
-        width=DEFAULT_SIZE,
-        height=DEFAULT_SIZE,
         camera_id=None,
         camera_name=None,
     ):
+        width, height = (self.image_size, self.image_size)
         if mode == "rgb_array" or mode == "depth_array":
             if camera_id is not None and camera_name is not None:
                 raise ValueError(
@@ -205,10 +205,10 @@ class MujocoEnv(gym.GoalEnv):
     def state_vector(self):
         return np.concatenate([self.sim.data.qpos.flat, self.sim.data.qvel.flat])
 
-    def get_camera_matrix(self, camera_name,
-                          height=DEFAULT_SIZE,
-                          width=DEFAULT_SIZE):
+    def get_camera_matrix(self, camera_name):
         """ calculates the camera matrix for a camera """
+        width, height = (self.image_size, self.image_size)
+
         camera_id = self.sim.model.camera_name2id(camera_name)
         # camera parameters
         fov = self.sim.model.cam_fovy[camera_id]
