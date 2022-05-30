@@ -9,10 +9,10 @@ from utils import ALGOS
 from tqdm import trange
 import mujoco_env
 
-TARGETS = {1: {"bca": [-0.029918, 0.035143, 1.0431],
-               "lcca": [0.003474, 0.035143, 1.0357]},
-           2: {'bca': [-0.013049, -0.077002, 1.0384],
-               'lcca': [0.019936, -0.048568, 1.0315]}}
+TARGETS = {1: {"bca": np.array([-0.029918, 0.035143, 1.0431]),
+               "lcca": np.array([0.003474, 0.035143, 1.0357])},
+           2: {'bca': np.array([-0.013049, -0.077002, 1.0384]),
+               'lcca': np.array([0.019936, -0.048568, 1.0315])}}
 
 DEFAULT_CAMERA_CONFIG = {
     "pos": [0.007738, - 0.029034, 1.550]
@@ -53,7 +53,7 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
                  success_reward: float = 10.0):
 
         self.scene = scene
-        self.target = np.array(TARGETS[scene][target])
+        self.target = TARGETS[scene][target]
         self.obs_type = obs_type
         self.image_size = image_size
         self.delta = delta
