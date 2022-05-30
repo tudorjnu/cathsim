@@ -94,7 +94,6 @@ def test_algorithms(algorithms: dict = ALGORITHMS,
 
                     env = CathSimEnv(scene=scene,
                                      obs_type=OBS_TYPE,
-                                     target=target,
                                      ep_length=EP_LENGTH)
 
                     model_path = os.path.join(MODELS_PATH, fname)

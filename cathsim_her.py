@@ -28,10 +28,11 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
                  image_size: int = 128,
                  delta: float = 0.008,
                  dense_reward: bool = False,
-                 success_reward: float = 0.0):
+                 success_reward: float = 0.0,
+                 target: str = "bca"):
 
         self.scene = scene
-        self.desired_goal = TARGETS[scene]["bca"]
+        self.desired_goal = TARGETS[scene][target]
         self.obs_type = obs_type
         self.image_size = image_size
         self.delta = delta
