@@ -15,7 +15,7 @@ if __name__ == "__main__":
     algorithm_name = "ppo"
     algorithm = ALGOS[algorithm_name]
     scene = 1
-    target = "lcca"
+    target = "bca"
     policy = "MlpPolicy"
 
     fname = f"{algorithm_name}-{scene}-{target}-{policy}"
@@ -23,7 +23,8 @@ if __name__ == "__main__":
     env = CathSimEnv(scene=scene,
                      obs_type=OBS_TYPE,
                      target="bca",
-                     delta=0.01)
+                     delta=0.008)
+    # env = gym.make('cathsim-gym/CathSim-v0')
 
     env = TimeLimit(env, max_episode_steps=EP_LENGTH)
 
@@ -38,17 +39,10 @@ if __name__ == "__main__":
 
     # print(f"Mean reward: {mean_reward:.2f} +/- {std_reward:.2f}")
 
-    # Enjoy trained agent
     obs = env.reset()
     done = False
     while not done:
-        action, _states = model.predict(obs, deterministic=True)
-        obs, rewards, dones, info = env.step(action)
-        head_pos = info["head_pos"]
-        target_pos = info["target_pos"]
-        distance = info["distance"]
-        print(
-            f"\n\nHead: {head_pos}\nTarget: {target_pos}\nDistance: {distance}")
-        print("Done:", dones)
+        action, _states = model.predict(obs)
+        obs, rewards, done, info = env.step(action)
         env.render()
     env.close()
