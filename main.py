@@ -47,7 +47,6 @@ def train_algorithms(algorithms: dict = ALGORITHMS):
                                      target=target)
 
                     env = TimeLimit(env, max_episode_steps=EP_LENGTH)
-                    print(env.observation_space)
 
                     N_ENVS = 4
                     if algorithm_name == "sac" and obs_type != "internal":
