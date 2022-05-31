@@ -49,10 +49,9 @@ def train_algorithms(algorithms: dict = ALGORITHMS):
                     env = TimeLimit(env, max_episode_steps=EP_LENGTH)
 
                     N_ENVS = 4
-                    if algorithm_name == "sac" and obs_type != "internal":
-                        N_ENVS = 1
-                    env = make_vec_env(
-                        lambda: env, n_envs=N_ENVS, vec_env_cls=SubprocVecEnv)
+                    if not algorithm_name == "sac" and obs_type == "internal":
+                        env = make_vec_env(
+                            lambda: env, n_envs=N_ENVS, vec_env_cls=SubprocVecEnv)
 
                     model_path = os.path.join(MODELS_PATH, fname)
 
