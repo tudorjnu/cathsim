@@ -119,7 +119,10 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
         reward = self.compute_reward(obs['achieved_goal'], obs['desired_goal'])
 
-        return obs, reward, self.done, {}
+        info = {"head_pos": self.head_pos,
+                "done": self.done}
+
+        return obs, reward, self.done, info
 
     def _get_obs(self):
 
@@ -135,16 +138,17 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
             position = data.qpos.flat.copy()
             velocity = data.qvel.flat.copy()
-
-            # com_inertia = data.cinert.flat.copy()
-            # actuator_forces = data.qfrc_actuator.flat.copy()
+            com_inertia = data.cinert.flat.copy()
+            com_velocity = data.cvel.flat.copy()
+            actuator_forces = data.qfrc_actuator.flat.copy()
 
             obs = np.concatenate(
                 (
                     position,
                     velocity,
-                    # com_inertia,
-                    # actuator_forces,
+                    com_inertia,
+                    com_velocity,
+                    actuator_forces,
                 )
             )
 
@@ -196,14 +200,15 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
 if __name__ == "__main__":
     env = CathSimEnv(scene=1,
-                     obs_type="internal",
+                     obs_type="image_time",
                      dense_reward=False)
-    print("Observation: ", env.observation_space["observation"])
+    print("Observation: ", env.observation_space["observation"].shape)
     print("Achived Goal: ", env.observation_space["achieved_goal"])
     print("Desired Goal: ", env.observation_space["desired_goal"])
     env = TimeLimit(env, max_episode_steps=1500)
 
     check_env(env, warn=True)
+    exit()
 
     algorithm = ALGOS["ddpg"]
 
@@ -214,7 +219,7 @@ if __name__ == "__main__":
         replay_buffer_kwargs=dict(
             n_sampled_goal=4,
             goal_selection_strategy="future",
-            max_episode_length=1500,
+            max_episode_length=2000,
             online_sampling=True,
         ),
         verbose=1,

@@ -2,8 +2,6 @@ import os
 from cathsim_her import CathSimEnv
 from utils import evaluate_env
 from utils import ALGOS
-from stable_baselines3.common.env_util import make_vec_env
-from stable_baselines3.common.vec_env import SubprocVecEnv
 from stable_baselines3 import HerReplayBuffer
 from gym.wrappers import TimeLimit
 EP_LENGTH = 2000
@@ -11,7 +9,7 @@ TIMESTEPS = EP_LENGTH * 100
 N_EVAL = 30
 
 ENV_NAME = "1"
-OBS_TYPE = "internal"
+OBS_TYPE = "image_time"
 TARGET = ["lcca"]
 SCENE = [1]
 POLICIES = ["MlpPolicy"]
@@ -44,7 +42,7 @@ def train_algorithms(algorithms: dict = ALGORITHMS,
                     env = CathSimEnv(scene=scene,
                                      obs_type=OBS_TYPE)
 
-                    env = TimeLimit(env, max_episode_steps=EP_LENGTH)
+                    # env = TimeLimit(env, max_episode_steps=EP_LENGTH)
 
                     model_path = os.path.join(MODELS_PATH, fname)
 
@@ -57,17 +55,11 @@ def train_algorithms(algorithms: dict = ALGORITHMS,
                             env,
                             replay_buffer_class=HerReplayBuffer,
                             replay_buffer_kwargs=dict(
-                                n_sampled_goal=4,
                                 goal_selection_strategy="future",
                                 max_episode_length=2000,
-                                online_sampling=True,
                             ),
                             verbose=1,
                             buffer_size=int(1e6),
-                            learning_rate=1e-3,
-                            gamma=0.95,
-                            batch_size=256,
-                            policy_kwargs=dict(net_arch=[256, 256, 256]),
                             seed=42,
                             tensorboard_log=LOGS_PATH,
                         )
