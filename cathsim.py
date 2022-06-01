@@ -50,7 +50,8 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
                  image_size: int = 128,
                  delta: float = 0.008,
                  dense_reward: bool = True,
-                 success_reward: float = 10.0):
+                 success_reward: float = 10.0,
+                 compute_force: bool = True):
 
         self.scene = scene
         self.target = TARGETS[scene][target]
@@ -97,12 +98,11 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
                 mujoco_py.functions.mj_contactForce(
                     self.sim.model, data, i, c_array)
                 collision_force = np.linalg.norm(c_array[:3])
-                for i in range(collision_pos[0]-image_range,
-                               collision_pos[0]+image_range):
-                    for j in range(collision_pos[1]-image_range,
-                                   collision_pos[1]+image_range):
-                        if (0 <= i <= self.image_size and
-                                0 <= j <= self.image_size):
+                for i in range(collision_pos[0] - image_range,
+                               collision_pos[0] + image_range):
+                    for j in range(collision_pos[1] - image_range,
+                                   collision_pos[1] + image_range):
+                        if (0 <= i <= self.image_size and 0 <= j <= self.image_size):
                             force_image[j, i] = collision_force
 
         return force_image
@@ -145,6 +145,8 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
                 "distance": distance,
                 "head_pos": head_pos,
                 "target_pos": self.target}
+        if self.compute_force:
+            info["force_image"] = self.force_image
 
         return obs, reward, done, info
 
@@ -199,7 +201,7 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         x, y, z = point
         xs, ys, s = camera_matrix.dot(np.array([x, y, z, 1.0]))
 
-        return round(xs/s), round(ys/s)
+        return round(xs / s), round(ys / s)
 
     def get_image(self, camera_name, mode="rgb"):
         """get_image.
