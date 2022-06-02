@@ -12,7 +12,7 @@
 		</default>
 	</default>
 	<worldbody>
-		<site name="target_bca" class="scene" pos="-0.029918 0.035143 1.0431"/>
-		<site name="target_lcca" class="scene" pos="0.003474 0.035143 1.0357"/>
+		<!--<site name="target_bca" class="scene" pos="-0.029918 0.035143 1.0431"/>-->
+		<!--<site name="target_lcca" class="scene" pos="0.003474 0.035143 1.0357"/>-->
 	</worldbody>
 </mujoco>
