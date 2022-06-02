@@ -1,9 +1,11 @@
+from stable_baselines3 import PPO
 import cv2
+from collections import deque
 import matplotlib.pyplot as plt
 import mujoco_py
 import numpy as np
 from gym import utils
-from gym.wrappers import TimeLimit
+from gym.wrappers import TimeLimit, FrameStack
 from stable_baselines3.common.env_checker import check_env
 from utils import ALGOS
 from tqdm import trange
@@ -19,29 +21,7 @@ DEFAULT_CAMERA_CONFIG = {
 }
 
 
-def test_env(env):
-    """test_env.
-
-    :param env:
-    """
-    check_env(env, warn=True)
-    print("Observation space:", env.observation_space)
-    print("Shape:", env.observation_space.shape)
-    print("Action space:", env.action_space)
-    action = env.action_space.sample()
-    obs, reward, done, info = env.step(action)
-    print("obs_shape:", obs.shape, "\nreward:", reward, "\ndone:", done)
-    for key, value in info.items():
-        if key != "force_image":
-            print(f'{key}: {value}')
-        else:
-            print(f'{key}: {value.shape}')
-    print("Degrees of Freedom:", env.sim.model.nv)
-    obs = env.reset()
-
-
 class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
-    """CathSimEnv."""
 
     def __init__(self,
                  scene: int = 1,
@@ -50,7 +30,8 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
                  image_size: int = 128,
                  delta: float = 0.008,
                  dense_reward: bool = True,
-                 success_reward: float = 10.0):
+                 success_reward: float = 10.0,
+                 n_frames: int = 3):
 
         self.scene = scene
         self.target = TARGETS[scene][target]
@@ -65,9 +46,10 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         xml_file = f'scene_{scene}.xml'
         self.image_size = image_size
 
-        if self.obs_type == "image_time":
-            self.obs = np.zeros(
-                shape=(image_size, image_size, 3))
+        self.n_frames = n_frames
+        self.frames = deque(maxlen=n_frames)
+        for i in range(n_frames):
+            self.frames.append(np.zeros(shape=(image_size, image_size)))
 
         """ Inherits from MujocoEnv """
 
@@ -112,7 +94,7 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         Computes the reward for the given achieved goal and desired goal.
         """
         distance = np.linalg.norm(achieved_goal - desired_goal)
-        success = (distance < self.delta)
+        success = bool(distance <= self.delta)
 
         if self.dense_reward:
             reward = self.success_reward if success else -distance
@@ -152,12 +134,9 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         """_get_obs."""
 
         if self.obs_type == "image":
-            obs = self.get_image("top_view", mode="gray")
-        elif self.obs_type == "image_time":
-            image = self.get_image("top_view", mode="gray")
-            np.append(self.obs, image, axis=-1)
-            np.delete(self.obs, 0, -1)
-            return self.obs
+            image = self.get_image("top_view")
+            self.frames.append(image)
+            obs = np.array(self.frames)
         else:
             data = self.sim.data
 
@@ -182,7 +161,6 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         return obs
 
     def reset(self):
-        """reset."""
         self.set_state(
             self.init_qpos + self.np_random.uniform(low=-0.00,
                                                     high=0.00,
@@ -202,22 +180,12 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         return round(xs/s), round(ys/s)
 
     def get_image(self, camera_name, mode="rgb"):
-        """get_image.
-
-        :param camera_name:
-        :param mode:
-        """
         image = self.render("rgb_array", camera_name=camera_name)
-        if mode == "gray":
-            image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)[:, :, np.newaxis]
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
         return image
 
     def print_info(self, link=-1):
-        """print_info.
-
-        :param link:
-        """
         print("Position: ", self.data.qpos[link])
         print("Velocity: ", self.data.qvel[link])
         print("COM Inertia: ", self.data.cinert[link])
@@ -227,39 +195,38 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
 if __name__ == "__main__":
     env = CathSimEnv(scene=1,
-                     obs_type="internal",
+                     obs_type="image",
                      target="lcca",
-                     image_size=128)
-    print(env.observation_space)
+                     image_size=128,
+                     n_frames=3)
     env = TimeLimit(env, max_episode_steps=2000)
-    obs = env.reset()
+    print(env.observation_space.shape)
+    model = PPO(
+        "CnnPolicy", env,
+        verbose=1,
+        device="cuda",
+        learning_rate=5.05041e-05,
+        n_steps=512,
+        clip_range=0.1,
+        ent_coef=0.000585045,
+        n_epochs=20,
+        max_grad_norm=1,
+        vf_coef=0.871923,
+        batch_size=32,
+        seed=42)
 
-    check_env(env)
-    # exit()
-
-    print("Degrees of Freedom:", env.model.nv)
-    print("Number of joints:", env.model.nq)
-    print("Number of actuators:", env.model.na)
-    print("Number of bodies:", env.model.nbody)
-
-    print("Position:", env.sim.data.qpos.shape)
-    print(env.sim.data.qpos[0])
-    print("Velocity:", env.sim.data.qvel.shape)
-    print(env.sim.data.qvel[0])
-
-    print("COM inertia:", env.sim.data.cinert.shape)
-    print(env.sim.data.cinert[0])
-    print("COM velocity:", env.sim.data.cvel.shape)
-    print(env.sim.data.cvel[0])
+    model.learn(total_timesteps=1000000)
+    exit()
 
     for _ in trange(2):
-        print(env.head_pos)
         obs = env.reset()
         done = False
         while not done:
-            # env.print_info()
-            env.render()
             action = env.action_space.sample()
             obs, reward, done, info = env.step(action)
+            print(reward)
+
+            cv2.imshow("Image", obs[0])
+            cv2.waitKey(1)
 
     env.close()
