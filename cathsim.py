@@ -32,22 +32,23 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
                  dense_reward: bool = True,
                  success_reward: float = 10.0,
                  n_frames: int = 3):
+                 compute_force: bool = True):
 
-        self.scene = scene
-        self.target = TARGETS[scene][target]
-        self.obs_type = obs_type
-        self.image_size = image_size
-        self.delta = delta
-        self.dense_reward = dense_reward
-        self.success_reward = success_reward
+        self.scene=scene
+        self.target=TARGETS[scene][target]
+        self.obs_type=obs_type
+        self.image_size=image_size
+        self.delta=delta
+        self.dense_reward=dense_reward
+        self.success_reward=success_reward
 
         utils.EzPickle.__init__(self)
 
-        xml_file = f'scene_{scene}.xml'
-        self.image_size = image_size
+        xml_file=f'scene_{scene}.xml'
+        self.image_size=image_size
 
-        self.n_frames = n_frames
-        self.frames = deque(maxlen=n_frames)
+        self.n_frames=n_frames
+        self.frames=deque(maxlen = n_frames)
         for i in range(n_frames):
             self.frames.append(np.zeros(shape=(image_size, image_size)))
 
@@ -55,13 +56,13 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
         mujoco_env.MujocoEnv.__init__(self, xml_file, 5, image_size)
 
-    @property
+    @ property
     def force_image(self):
         """ computes the force and maps it to an image """
-        image_range = 2
+        image_range=2
 
-        data = self.sim.data
-        force_image = np.zeros(
+        data=self.sim.data
+        force_image=np.zeros(
             shape=(self.image_size, self.image_size, 1))
 
         # for all available contacts
@@ -79,12 +80,11 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
                 mujoco_py.functions.mj_contactForce(
                     self.sim.model, data, i, c_array)
                 collision_force = np.linalg.norm(c_array[:3])
-                for i in range(collision_pos[0]-image_range,
-                               collision_pos[0]+image_range):
-                    for j in range(collision_pos[1]-image_range,
-                                   collision_pos[1]+image_range):
-                        if (0 <= i <= self.image_size and
-                                0 <= j <= self.image_size):
+                for i in range(collision_pos[0] - image_range,
+                               collision_pos[0] + image_range):
+                    for j in range(collision_pos[1] - image_range,
+                                   collision_pos[1] + image_range):
+                        if (0 <= i <= self.image_size and 0 <= j <= self.image_size):
                             force_image[j, i] = collision_force
 
         return force_image
@@ -127,6 +127,8 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
                 "distance": distance,
                 "head_pos": head_pos,
                 "target_pos": self.target}
+        if self.compute_force:
+            info["force_image"] = self.force_image
 
         return obs, reward, done, info
 
@@ -177,7 +179,7 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         x, y, z = point
         xs, ys, s = camera_matrix.dot(np.array([x, y, z, 1.0]))
 
-        return round(xs/s), round(ys/s)
+        return round(xs / s), round(ys / s)
 
     def get_image(self, camera_name, mode="rgb"):
         image = self.render("rgb_array", camera_name=camera_name)
