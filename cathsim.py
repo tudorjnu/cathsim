@@ -31,7 +31,7 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
                  delta: float = 0.008,
                  dense_reward: bool = True,
                  success_reward: float = 10.0,
-                 n_frames: int = 3):
+                 n_frames: int = 3,
                  compute_force: bool = True):
 
         self.scene=scene
