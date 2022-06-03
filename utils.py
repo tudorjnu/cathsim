@@ -91,7 +91,7 @@ def evaluate_env(model, env,
                  n_episodes: int = 30,
                  deterministic: bool = False,
                  render: bool = False,
-                 verbose: bool = 0
+                 verbose: bool = 1
                  ) -> tuple:
 
     rewards = []
@@ -106,7 +106,7 @@ def evaluate_env(model, env,
 
         done = False
         obs = env.reset()
-        for i in trange(env.ep_length):
+        while True:
             if render:
                 env.render()
             action, _state = model.predict(obs, deterministic=deterministic)
@@ -116,16 +116,17 @@ def evaluate_env(model, env,
             if len(step_forces) > 0:
                 episode_forces.extend(step_forces)
                 forces.extend(step_forces)
-
             if done:
-                if env.current_step <= env.ep_length:
+                if env._elapsed_steps < env._max_episode_steps:
                     dones += 1
                 break
 
-        lengths.append(env.current_step)
+        lengths.append(env._elapsed_steps)
         rewards.append(episode_rewards)
         forces.extend(episode_forces)
         max_forces.append(np.max(episode_forces))
+        print(
+            f"Episode {i}: {episode_rewards:.2f}, steps: {env._elapsed_steps}")
 
     mean_reward = 0
     std_reward = 0
