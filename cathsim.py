@@ -1,15 +1,14 @@
-from stable_baselines3 import PPO
 import cv2
+from tqdm import trange
 from collections import deque
-import matplotlib.pyplot as plt
 import mujoco_py
 import numpy as np
 from gym import utils
-from gym.wrappers import TimeLimit, FrameStack
+from gym.wrappers import TimeLimit
 from stable_baselines3.common.env_checker import check_env
-from utils import ALGOS
-from tqdm import trange
 import mujoco_env
+from stable_baselines3 import PPO
+from stable_baselines3.common.utils import set_random_seed
 
 TARGETS = {1: {"bca": np.array([-0.029918, 0.035143, 1.0431]),
                "lcca": np.array([0.003474, 0.035143, 1.0357])},
@@ -31,26 +30,27 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
                  delta: float = 0.008,
                  dense_reward: bool = True,
                  success_reward: float = 10.0,
-                 n_frames: int = 3,
-                 compute_force: bool = True):
+                 n_frames: int = 4,
+                 compute_force: bool = False):
 
-        self.scene=scene
-        self.target=TARGETS[scene][target]
-        self.obs_type=obs_type
-        self.image_size=image_size
-        self.delta=delta
-        self.dense_reward=dense_reward
-        self.success_reward=success_reward
+        self.scene = scene
+        self.target = TARGETS[scene][target]
+        self.obs_type = obs_type
+        self.image_size = image_size
+        self.delta = delta
+        self.dense_reward = dense_reward
+        self.success_reward = success_reward
+        self.compute_force = compute_force
 
-        utils.EzPickle.__init__(self)
+        xml_file = f'scene_{scene}.xml'
+        self.image_size = image_size
 
-        xml_file=f'scene_{scene}.xml'
-        self.image_size=image_size
-
-        self.n_frames=n_frames
-        self.frames=deque(maxlen = n_frames)
+        self.n_frames = n_frames
+        self.frames = deque(maxlen=n_frames)
         for i in range(n_frames):
             self.frames.append(np.zeros(shape=(image_size, image_size)))
+
+        utils.EzPickle.__init__(self)
 
         """ Inherits from MujocoEnv """
 
@@ -59,10 +59,10 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
     @ property
     def force_image(self):
         """ computes the force and maps it to an image """
-        image_range=2
+        image_range = 2
 
-        data=self.sim.data
-        force_image=np.zeros(
+        data = self.sim.data
+        force_image = np.zeros(
             shape=(self.image_size, self.image_size, 1))
 
         # for all available contacts
@@ -88,6 +88,32 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
                             force_image[j, i] = collision_force
 
         return force_image
+
+    @ property
+    def forces(self):
+        """ computes the force and maps it to an image """
+        data = self.sim.data
+
+        # for all available contacts
+        forces = []
+        for i in range(data.ncon):
+            contact = data.contact[i]
+
+            geom_1 = [contact.geom1,
+                      self.sim.model.geom_id2name(contact.geom1)]
+            geom_2 = [contact.geom2,
+                      self.sim.model.geom_id2name(contact.geom2)]
+            if geom_1[1] is None or geom_2[1] is None:
+                collision_pos = self.point2pixel(point=contact.pos,
+                                                 camera_matrix=self.top_camera_matrix)
+                c_array = np.zeros(6, dtype=np.float64)
+                mujoco_py.functions.mj_contactForce(
+                    self.sim.model, data, i, c_array)
+                collision_force = np.linalg.norm(c_array[:3])
+                forces.append(
+                    [collision_pos[0], collision_pos[1], collision_force])
+
+        return forces
 
     def compute_reward(self, achieved_goal, desired_goal, info=None):
         """
@@ -172,6 +198,11 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
                                                     size=self.model.nv),
         )
 
+        if self.obs_type == "image":
+            self.frames.clear()
+            for i in range(self.n_frames):
+                self.frames.append(
+                    np.zeros(shape=(self.image_size, self.image_size)))
         return self._get_obs()
 
     def point2pixel(self, point, camera_matrix):
@@ -195,30 +226,35 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         print("Actuator Forces: ", self.data.qfrc_actuator[link].shape)
 
 
+def make_env(rank, scene, target, obs_type, image_size, n_frames, seed):
+    """
+    Utility function for multiprocessed env.
+
+    :param env_id: (str) the environment ID
+    :param num_env: (int) the number of environments you wish to have in subprocesses
+    :param seed: (int) the inital seed for RNG
+    :param rank: (int) index of the subprocess
+    """
+    def _init():
+        env = CathSimEnv(scene=scene, target=target, obs_type=obs_type,
+                         image_size=image_size, n_frames=n_frames)
+        env = TimeLimit(env, max_episode_steps=2000)
+        env.seed(seed + rank)
+        return env
+    set_random_seed(seed)
+    return _init
+
+
 if __name__ == "__main__":
+
     env = CathSimEnv(scene=1,
                      obs_type="image",
                      target="lcca",
                      image_size=128,
-                     n_frames=3)
+                     n_frames=4)
     env = TimeLimit(env, max_episode_steps=2000)
+    check_env(env)
     print(env.observation_space.shape)
-    model = PPO(
-        "CnnPolicy", env,
-        verbose=1,
-        device="cuda",
-        learning_rate=5.05041e-05,
-        n_steps=512,
-        clip_range=0.1,
-        ent_coef=0.000585045,
-        n_epochs=20,
-        max_grad_norm=1,
-        vf_coef=0.871923,
-        batch_size=32,
-        seed=42)
-
-    model.learn(total_timesteps=1000000)
-    exit()
 
     for _ in trange(2):
         obs = env.reset()
@@ -226,9 +262,6 @@ if __name__ == "__main__":
         while not done:
             action = env.action_space.sample()
             obs, reward, done, info = env.step(action)
-            print(reward)
-
+            # force_image = env.force_image
             cv2.imshow("Image", obs[0])
             cv2.waitKey(1)
-
-    env.close()

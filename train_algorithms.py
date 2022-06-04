@@ -11,14 +11,16 @@ EP_LENGTH = 2000
 TIMESTEPS = EP_LENGTH * 300
 N_EVAL = 30
 
-ENV_NAME = "test_vectorised"
-OBS_TYPE = ["image_time"]
+ENV_NAME = "1_test"
+OBS_TYPE = ["image_time", "image"]
 TARGET = ["lcca", "bca"]
 SCENE = [1, 2]
-algo = "sac"
-ALGORITHMS = {f"{algo}": ALGOS[f"{algo}"]}
-IMAGE_SIZE = 64
-n_env = 2
+ALGORITHMS = ["ppo", "sac"]
+algorithms = {}
+for algorithm in ALGORITHMS:
+    algorithms[algorithm] = ALGOS[algorithm]
+IMAGE_SIZE = 128
+n_env = 4
 
 SAVING_PATH = f"./benchmarking/{ENV_NAME}"
 
@@ -43,20 +45,18 @@ def make_env(rank, scene, target, obs_type, image_size, n_frames, seed):
     return _init
 
 
-def train_algorithms(algorithms: dict = ALGORITHMS):
+def train_algorithms(algorithms: dict = algorithms):
     for obs_type in OBS_TYPE:
         MODELS_PATH = os.path.join(SAVING_PATH, "models", obs_type)
-        CKPT_PATH = os.path.join(SAVING_PATH, "ckpt", obs_type)
         LOGS_PATH = os.path.join(SAVING_PATH, "logs", obs_type)
-        RESULTS_PATH = os.path.join(SAVING_PATH, "results", obs_type)
-        HEATMAPS_PATH = os.path.join(SAVING_PATH, "heatmaps", obs_type)
 
-        for path in [MODELS_PATH, LOGS_PATH, CKPT_PATH, RESULTS_PATH, HEATMAPS_PATH]:
+        for path in [MODELS_PATH, LOGS_PATH]:
             os.makedirs(path, exist_ok=True)
 
-        for algorithm_name, algorithm in algorithms.items():
-            for scene in SCENE:
-                for target in TARGET:
+        for scene in SCENE:
+            for target in TARGET:
+                for algorithm_name, algorithm in algorithms.items():
+
                     policy = "MlpPolicy"
                     if obs_type != "internal":
                         policy = "CnnPolicy"
@@ -69,16 +69,20 @@ def train_algorithms(algorithms: dict = ALGORITHMS):
                         n_frames = 4
 
                     env = SubprocVecEnv([make_env(i, scene=scene,
-                                                  target=target, obs_type=obs_type,
-                                                  image_size=IMAGE_SIZE, n_frames=n_frames, seed=42)
+                                                  target=target,
+                                                  obs_type=obs_type,
+                                                  image_size=IMAGE_SIZE,
+                                                  n_frames=n_frames,
+                                                  seed=42)
                                          for i in range(n_env)])
 
                     model_path = os.path.join(MODELS_PATH, fname)
 
                     if os.path.exists(f"{model_path}.zip"):
-                        print("...loading_env...")
-                        model = algorithm.load(model_path, env=env)
+                        print(f"{fname} already trained")
+                        continue
                     else:
+                        print(f"Training {fname}")
                         buffer_size = int(1e6)
                         if obs_type == "image":
                             buffer_size = int(3e5)
@@ -113,25 +117,8 @@ def train_algorithms(algorithms: dict = ALGORITHMS):
                                                   verbose=1,
                                                   device="cuda",
                                                   tensorboard_log=LOGS_PATH,
-                                                  learning_rate=2.5e-4,
-                                                  n_steps=128,
-                                                  clip_range=0.1,
-                                                  ent_coef=0.01,
-                                                  vf_coef=0.5,
-                                                  batch_size=256,
                                                   seed=42)
 
-                        elif algorithm_name == "td3":
-                            model = algorithm(
-                                policy, env,
-                                verbose=1,
-                                device="cuda",
-                                tensorboard_log=LOGS_PATH,
-                                gradient_steps=1,
-                                learning_rate=3e-4,
-                                buffer_size=buffer_size,
-                                batch_size=256,
-                                seed=42)
                         else:
                             model = algorithm(
                                 policy, env,

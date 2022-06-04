@@ -3,18 +3,20 @@ from cathsim_her import CathSimEnv
 from utils import evaluate_env
 from utils import ALGOS
 from stable_baselines3 import HerReplayBuffer
+from stable_baselines3.common.env_util import make_vec_env
+from stable_baselines3.common.vec_env import SubprocVecEnv
 from gym.wrappers import TimeLimit
 EP_LENGTH = 2000
-TIMESTEPS = EP_LENGTH * 100
+TIMESTEPS = EP_LENGTH * 300
 N_EVAL = 30
 
-ENV_NAME = "1"
-OBS_TYPE = "image_time"
-TARGET = ["lcca"]
+ENV_NAME = "test"
+OBS_TYPE = "internal"
 SCENE = [1]
 POLICIES = ["MlpPolicy"]
 algo = "ddpg"
 ALGORITHMS = {f"{algo}": ALGOS[f"{algo}"]}
+N_ENVS = 1
 
 
 SAVING_PATH = f"./benchmarking/{ENV_NAME}"
@@ -35,40 +37,43 @@ def train_algorithms(algorithms: dict = ALGORITHMS,
     for algorithm_name, algorithm in algorithms.items():
         for policy in policies:
             for scene in SCENE:
-                for target in TARGET:
 
-                    fname = f"{algorithm_name}_HER-{scene}-{target}-{policy}"
+                fname = f"{algorithm_name}_HER-{scene}-{policy}"
 
-                    env = CathSimEnv(scene=scene,
-                                     obs_type=OBS_TYPE)
+                env = CathSimEnv(scene=scene,
+                                 obs_type=OBS_TYPE)
 
-                    # env = TimeLimit(env, max_episode_steps=EP_LENGTH)
+                env = TimeLimit(env, max_episode_steps=EP_LENGTH)
 
-                    model_path = os.path.join(MODELS_PATH, fname)
+                env = make_vec_env(
+                    lambda: env, n_envs=N_ENVS, vec_env_cls=SubprocVecEnv)
 
-                    if os.path.exists(f"{model_path}.zip"):
-                        print("...loading_env...")
-                        model = algorithm.load(model_path, env=env)
-                    else:
-                        model = algorithm(
-                            "MultiInputPolicy",
-                            env,
-                            replay_buffer_class=HerReplayBuffer,
-                            replay_buffer_kwargs=dict(
-                                goal_selection_strategy="future",
-                                max_episode_length=2000,
-                            ),
-                            verbose=1,
-                            buffer_size=int(1e6),
-                            seed=42,
-                            tensorboard_log=LOGS_PATH,
-                        )
+                model_path = os.path.join(MODELS_PATH, fname)
 
-                    model.learn(total_timesteps=timesteps,
-                                reset_num_timesteps=False,
-                                tb_log_name=fname)
+                if os.path.exists(f"{model_path}.zip"):
+                    print("...loading_env...")
+                    model = algorithm.load(model_path, env=env)
+                else:
+                    model = algorithm(
+                        "MultiInputPolicy",
+                        env,
+                        replay_buffer_class=HerReplayBuffer,
+                        replay_buffer_kwargs=dict(
+                            goal_selection_strategy="future",
+                            max_episode_length=2000,
+                        ),
+                        verbose=1,
+                        learning_starts=1e4,
+                        buffer_size=int(1e6),
+                        seed=42,
+                        tensorboard_log=LOGS_PATH,
+                    )
 
-                    model.save(model_path)
+                model.learn(total_timesteps=timesteps,
+                            reset_num_timesteps=False,
+                            tb_log_name=fname)
+
+                model.save(model_path)
 
 
 def test_algorithms(algorithms: dict = ALGORITHMS,
@@ -80,26 +85,25 @@ def test_algorithms(algorithms: dict = ALGORITHMS,
     for algorithm_name, algorithm in algorithms.items():
         for policy in policies:
             for scene in SCENE:
-                for target in TARGET:
 
-                    fname = f"{algorithm_name}-{scene}-{target}-{policy}"
+                fname = f"{algorithm_name}_HER-{scene}-{policy}"
 
-                    env = CathSimEnv(scene=scene,
-                                     obs_type=OBS_TYPE,
-                                     ep_length=EP_LENGTH)
+                env = CathSimEnv(scene=scene,
+                                 obs_type=OBS_TYPE,
+                                 ep_length=EP_LENGTH)
 
-                    model_path = os.path.join(MODELS_PATH, fname)
-                    if os.path.exists(f"{model_path}.zip"):
-                        print(f"...loading {algorithm_name}...")
+                model_path = os.path.join(MODELS_PATH, fname)
+                if os.path.exists(f"{model_path}.zip"):
+                    print(f"...loading {algorithm_name}...")
 
-                        model = algorithm.load(model_path, env=env)
+                    model = algorithm.load(model_path, env=env)
 
-                        evaluate_env(model=model, env=env,
-                                     n_episodes=n_eval,
-                                     render=render,
-                                     deterministic=False,
-                                     saving_path=RESULTS_PATH,
-                                     fname=fname)
+                    evaluate_env(model=model, env=env,
+                                 n_episodes=n_eval,
+                                 render=render,
+                                 deterministic=False,
+                                 saving_path=RESULTS_PATH,
+                                 fname=fname)
 
 
 if __name__ == "__main__":
