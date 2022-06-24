@@ -8,11 +8,11 @@ EP_LENGTH = 2000
 TIMESTEPS = EP_LENGTH * 300
 N_EVAL = 30
 
-ENV_NAME = "1"
-OBS_TYPE = ["image", "image_time"]
+ENV_NAME = "1_test"
+OBS_TYPE = ["image_time"]
 TARGET = ["lcca", "bca"]
 SCENE = [1, 2]
-ALGORITHMS = ["ppo", "sac"]
+ALGORITHMS = ["sac"]
 algorithms = {}
 for algorithm in ALGORITHMS:
     algorithms[algorithm] = ALGOS[algorithm]
@@ -30,6 +30,8 @@ def test_algorithms(algorithms: dict = algorithms,
     for obs_type in OBS_TYPE:
         MODELS_PATH = os.path.join(SAVING_PATH, "models", obs_type)
         RESULTS_PATH = os.path.join(SAVING_PATH, "results", obs_type)
+
+        os.makedirs(RESULTS_PATH, exist_ok=True)
 
         for scene in SCENE:
             for target in TARGET:
@@ -49,24 +51,27 @@ def test_algorithms(algorithms: dict = algorithms,
                                      target=target,
                                      n_frames=n_frames,
                                      image_size=128)
-                    print(env.observation_space.shape)
 
                     env = TimeLimit(env, max_episode_steps=EP_LENGTH)
 
                     model_path = os.path.join(MODELS_PATH, fname)
 
                     if os.path.exists(f"{model_path}.zip"):
-                        print(f"...loading {fname}...")
+                        result = os.path.join(RESULTS_PATH, fname + ".npz")
+                        if not os.path.exists(result):
+                            print(f"...loading {fname}...")
 
-                        model = algorithm.load(
-                            model_path, env=env, device=device)
+                            model = algorithm.load(
+                                model_path, env=env, device=device)
 
-                        evaluate_env(model=model, env=env,
-                                     n_episodes=n_eval,
-                                     render=render,
-                                     deterministic=False,
-                                     saving_path=RESULTS_PATH,
-                                     fname=fname)
+                            evaluate_env(model=model, env=env,
+                                         n_episodes=n_eval,
+                                         render=render,
+                                         deterministic=False,
+                                         saving_path=RESULTS_PATH,
+                                         fname=fname)
+                        else:
+                            print(f"...skipping {fname}...")
 
 
 if __name__ == "__main__":

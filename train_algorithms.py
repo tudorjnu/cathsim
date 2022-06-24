@@ -12,10 +12,10 @@ TIMESTEPS = EP_LENGTH * 300
 N_EVAL = 30
 
 ENV_NAME = "1_test"
-OBS_TYPE = ["image_time", "image"]
+OBS_TYPE = ["internal"]
 TARGET = ["lcca", "bca"]
 SCENE = [1, 2]
-ALGORITHMS = ["ppo", "sac"]
+ALGORITHMS = ["ppo"]
 algorithms = {}
 for algorithm in ALGORITHMS:
     algorithms[algorithm] = ALGOS[algorithm]

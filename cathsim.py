@@ -248,20 +248,36 @@ def make_env(rank, scene, target, obs_type, image_size, n_frames, seed):
 if __name__ == "__main__":
 
     env = CathSimEnv(scene=1,
-                     obs_type="image",
+                     obs_type="internal",
                      target="lcca",
-                     image_size=128,
-                     n_frames=4)
+                     image_size=500,
+                     n_frames=1)
     env = TimeLimit(env, max_episode_steps=2000)
     check_env(env)
     print(env.observation_space.shape)
 
-    for _ in trange(2):
+    model_path = "./benchmarking/2/models/internal/ppo-1-lcca-MlpPolicy"
+    model = PPO.load(model_path)
+
+    for episode in range(1, 11):
         obs = env.reset()
-        done = False
-        while not done:
-            action = env.action_space.sample()
-            obs, reward, done, info = env.step(action)
-            # force_image = env.force_image
-            cv2.imshow("Image", obs[0])
+        for step in range(1, 2001):
+            action, _states = model.predict(obs)
+            obs, rewards, dones, info = env.step(action)
+            image = env.get_image("top_view")
+            if step % 10 == 0:
+                cv2.imwrite(f"./data/{episode}_{step}.png", image)
+            cv2.imshow("image", image)
             cv2.waitKey(1)
+            if dones:
+                break
+
+    # for _ in trange(2):
+        # obs = env.reset()
+        # done = False
+        # while not done:
+            # action = env.action_space.sample()
+            # obs, reward, done, info = env.step(action)
+            # # force_image = env.force_image
+            # cv2.imshow("Image", obs[0])
+            # cv2.waitKey(1)

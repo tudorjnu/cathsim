@@ -1,6 +1,4 @@
 from stable_baselines3.common.callbacks import CheckpointCallback
-from stable_baselines3.common.env_util import make_vec_env
-from stable_baselines3.common.vec_env import SubprocVecEnv
 from utils import TensorboardCallback,  ALGOS
 from cathsim_her import CathSimEnv
 import os
@@ -95,7 +93,7 @@ if __name__ == "__main__":
             online_sampling=True,
         ),
         verbose=1,
-        buffer_size=5000,
+        buffer_size=5e+5,
         learning_rate=1e-3,
         gamma=0.95,
         batch_size=256,
