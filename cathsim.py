@@ -212,9 +212,10 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
         return round(xs / s), round(ys / s)
 
-    def get_image(self, camera_name, mode="rgb"):
+    def get_image(self, camera_name, mode="gray"):
         image = self.render("rgb_array", camera_name=camera_name)
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        if mode == "gray":
+            image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
         return image
 
