@@ -162,7 +162,7 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         """_get_obs."""
 
         if self.obs_type == "image":
-            image = self.get_image("top_view")
+            image = self.get_image("top_camera")
             self.frames.append(image)
             obs = np.array(self.frames)
         else:
@@ -214,7 +214,8 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
     def get_image(self, camera_name, mode="rgb"):
         image = self.render("rgb_array", camera_name=camera_name)
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        if mode != "rgb":
+            image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
         return image
 
@@ -248,36 +249,15 @@ def make_env(rank, scene, target, obs_type, image_size, n_frames, seed):
 if __name__ == "__main__":
 
     env = CathSimEnv(scene=1,
-                     obs_type="internal",
+                     obs_type="image",
                      target="lcca",
-                     image_size=500,
-                     n_frames=1)
+                     image_size=128,
+                     n_frames=4)
     env = TimeLimit(env, max_episode_steps=2000)
     check_env(env)
     print(env.observation_space.shape)
-
-    model_path = "./benchmarking/2/models/internal/ppo-1-lcca-MlpPolicy"
-    model = PPO.load(model_path)
-
-    for episode in range(1, 11):
-        obs = env.reset()
-        for step in range(1, 2001):
-            action, _states = model.predict(obs)
-            obs, rewards, dones, info = env.step(action)
-            image = env.get_image("top_view")
-            if step % 10 == 0:
-                cv2.imwrite(f"./data/{episode}_{step}.png", image)
-            cv2.imshow("image", image)
-            cv2.waitKey(1)
-            if dones:
-                break
-
-    # for _ in trange(2):
-        # obs = env.reset()
-        # done = False
-        # while not done:
-            # action = env.action_space.sample()
-            # obs, reward, done, info = env.step(action)
-            # # force_image = env.force_image
-            # cv2.imshow("Image", obs[0])
-            # cv2.waitKey(1)
+    obs = env.reset()
+    done = False
+    while not done:
+        action = env.action_space.sample()
+        obs, reward, done, info = env.step(action)
