@@ -1,6 +1,8 @@
 data/
 blender/
 benchmarking/
+others/
+backups/
 decomp.obj
 load_modules.sh
 mujoco_env_2.py
