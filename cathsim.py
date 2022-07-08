@@ -15,10 +15,6 @@ TARGETS = {1: {"bca": np.array([-0.029918, 0.035143, 1.0431]),
            2: {'bca': np.array([-0.013049, -0.077002, 1.0384]),
                'lcca': np.array([0.019936, -0.048568, 1.0315])}}
 
-DEFAULT_CAMERA_CONFIG = {
-    "pos": [0.007738, - 0.029034, 1.550]
-}
-
 
 class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
 
@@ -215,10 +211,6 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
     def get_image(self, camera_name, mode="gray"):
         image = self.render("rgb_array", camera_name=camera_name)
         if mode != "rgb":
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
             image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
         return image
