@@ -1,7 +1,7 @@
 <mujoco model="scene_1">
 	<include file="phantom_1.xml"/>
-	<!--<include file="mjmodel_3_viz.xml"/> -->
 	<include file="mjmodel.xml"/>
+	<include file="camera_body.xml"/>
 	<include file="cylinder.xml"/> 
 	<!--<include file="slave.xml"/> -->
 	<include file="scene.xml"/>

@@ -2,6 +2,7 @@
 	<include file="phantom_2.xml"/>
 	<include file="mjmodel.xml"/>
 	<include file="cylinder.xml"/> 
+	<!--<include file="camera_body.xml"/>-->
 	<!--<include file="slave.xml"/> -->
 	<include file="scene.xml"/>
 	<default>

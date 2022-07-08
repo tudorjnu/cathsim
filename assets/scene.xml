@@ -72,12 +72,13 @@
 	<worldbody>
 		<geom type="plane" size="1 1 1" rgba="1 1 1 0"/>
 		<light directional="true" diffuse=".2 .2 .2" specular="0 0 0" pos="0 0 5" dir="0 0 -1" castshadow="false"/>
+		<light directional="true" diffuse=".2 .2 .2" specular="0 0 0" pos="0 0 0" dir="0 0 1" castshadow="false"/>
 		<light directional="false" diffuse=".8 .8 .8" specular="0.3 0.3 0.3" pos="0 0 4.0" dir="0 0 -1" castshadow="false"/>
-		<camera name="top_view" pos="0.007738 -0.069034 1.550" euler="0 0 0"/>
-		<camera name="top_cath" pos="-0.007738 -0.010034 1.15" euler="0 0 0"/>
-		<camera name="room_view" pos="-3.3639 -6.1446 1.8245" quat="0.723 0.635 -0.179 -0.203"/>
-		<camera name="side_view" pos="-.6809 .0042968 1.0705" quat="0.5 0.5 -0.5 -0.5"/>
-		<camera name="sider_view" pos="-1.445 -0.31823 1.0705" quat="0.5 0.5 -0.5 -0.5"/>
+		<camera name="top_camera" pos="0.007738 -0.069034 1.550" euler="0 0 0"/>
+		<!--<camera name="top_cath" pos="-0.007738 -0.010034 1.15" euler="0 0 0"/>-->
+		<!--<camera name="room_view" pos="-3.3639 -6.1446 1.8245" quat="0.723 0.635 -0.179 -0.203"/>-->
+		<!--<camera name="side_view" pos="-.6809 .0042968 1.0705" quat="0.5 0.5 -0.5 -0.5"/>-->
+		<!--<camera name="sider_view" pos="-1.445 -0.31823 1.0705" quat="0.5 0.5 -0.5 -0.5"/>-->
 
 		<!--<geom type="box" pos="0.007146 -0.58483 0.91779" size="0.074 0.276 0.070" class="scene" material="alice-blue"/>-->
 		<!--<geom class="scene" mesh="walls" rgba="1 1 1 1"/>-->

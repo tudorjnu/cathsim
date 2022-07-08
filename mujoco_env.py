@@ -78,7 +78,7 @@ class MujocoEnv(gym.Env):
         assert not done
 
         self._set_observation_space(observation)
-        self.top_camera_matrix = self.get_camera_matrix("top_view")
+        self.top_camera_matrix = self.get_camera_matrix("top_camera")
 
         self.seed()
 

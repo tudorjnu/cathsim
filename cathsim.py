@@ -215,7 +215,10 @@ class CathSimEnv(mujoco_env.MujocoEnv, utils.EzPickle):
     def get_image(self, camera_name, mode="gray"):
         image = self.render("rgb_array", camera_name=camera_name)
         if mode != "rgb":
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
             image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
         return image

@@ -511,6 +511,7 @@
                                                                                                                                                                                                                                                                                                                                                                                                                         <joint name="J0_99" axis="0 1 0" class="catheter" />
                                                                                                                                                                                                                                                                                                                                                                                                                         <joint name="J1_99" axis="0 0 1" class="catheter" />
                                                                                                                                                                                                                                                                                                                                                                                                                         <geom name="G99" size="0.0018 0.003" quat="0.707107 0 0.707107 0" type="capsule" group="1" rgba="0.2 0.2 0.2 1" />
+
                                                                                                                                                                                                                                                                                                                                                                                                                     </body>
                                                                                                                                                                                                                                                                                                                                                                                                                 </body>
                                                                                                                                                                                                                                                                                                                                                                                                             </body>
@@ -611,8 +612,8 @@
                 </body>
             </body>
         </body>
-    </worldbody>
-    <actuator>
+    </worldbody >
+    <actuator >
         <general name="slider_motor" joint="slider_joint" ctrllimited="true" forcelimited="true" ctrlrange="-1 1" forcerange="-0.015 0.015" />
 		<motor name="J0_90_motor" joint="J0_90" class="catheter"/>
 		<motor name="J1_90_motor" joint="J1_90" class="catheter"/>

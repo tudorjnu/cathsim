@@ -9,13 +9,12 @@ from gym.wrappers import TimeLimit
 
 EP_LENGTH = 2000
 TIMESTEPS = EP_LENGTH * 300
-N_EVAL = 30
 
-ENV_NAME = "1_test"
-OBS_TYPE = ["internal"]
-TARGET = ["lcca", "bca"]
-SCENE = [1, 2]
-ALGORITHMS = ["ppo"]
+ENV_NAME = "2_sequential"
+OBS_TYPE = ["image_time"]
+TARGET = ["lcca"]
+SCENE = [2]
+ALGORITHMS = ["sac"]
 algorithms = {}
 for algorithm in ALGORITHMS:
     algorithms[algorithm] = ALGOS[algorithm]
@@ -46,6 +45,7 @@ def make_env(rank, scene, target, obs_type, image_size, n_frames, seed):
 
 
 def train_algorithms(algorithms: dict = algorithms):
+    global OBS_TYPE
     for obs_type in OBS_TYPE:
         MODELS_PATH = os.path.join(SAVING_PATH, "models", obs_type)
         LOGS_PATH = os.path.join(SAVING_PATH, "logs", obs_type)
@@ -70,9 +70,9 @@ def train_algorithms(algorithms: dict = algorithms):
 
                     env = SubprocVecEnv([make_env(i, scene=scene,
                                                   target=target,
-                                                  obs_type=obs_type,
+                                                  obs_type="image",
                                                   image_size=IMAGE_SIZE,
-                                                  n_frames=n_frames,
+                                                  n_frames=4,
                                                   seed=42)
                                          for i in range(n_env)])
 
@@ -83,7 +83,7 @@ def train_algorithms(algorithms: dict = algorithms):
                         continue
                     else:
                         print(f"Training {fname}")
-                        buffer_size = int(1e6)
+                        buffer_size = int(3e5)
                         if obs_type == "image":
                             buffer_size = int(3e5)
                         if algorithm_name == "sac":
