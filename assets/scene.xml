@@ -4,7 +4,7 @@
 	<option gravity="0 0 0" cone="elliptic" density="1000" viscosity="0.0009" solver="PGS" >
 		<flag frictionloss="disable"/>
     </option>
-	<asset>
+	<asset >
 		<texture type="skybox" builtin="gradient" rgb1="1 1 1" rgb2="1 1 1" width="512" height="512"/>
 		<texture name="texplane" type="2d" builtin="gradient" rgb1="1 1 1" rgb2="1 1 1" width="512" height="512" />
 		<material name="matplane" reflectance="0" />
@@ -69,7 +69,7 @@
 		<mesh file="scene/rfi/support_arch.stl"/>
 		<mesh file="scene/box.stl"/>
 	</asset>
-	<worldbody>
+	<worldbody >
 		<geom type="plane" size="1 1 1" rgba="1 1 1 0"/>
 		<light directional="true" diffuse=".2 .2 .2" specular="0 0 0" pos="0 0 5" dir="0 0 -1" castshadow="false"/>
 		<light directional="true" diffuse=".2 .2 .2" specular="0 0 0" pos="0 0 0" dir="0 0 1" castshadow="false"/>
@@ -112,5 +112,13 @@
 		<!--<geom class="scene" mesh="scanners" material="white"/>-->
 		<!--<geom class="scene" mesh="support_arch" material="baby-blue-eyes"/>-->
 
+		<body name="head" pos="0.0076103 -0.01 1.02" euler="0 0 90" >
+		  <joint name="slider_joint" pos="0 0 0" axis="0 0 -1" type="hinge" damping="0.04" />
+		  <geom type="sphere" size=".01" rgba="0 0 0 0"  contype="0" conaffinity="0" />
+		  <camera name="aorta_camera" pos="0 -0.8 0" euler="90 0 0" />
+		</body>
 	</worldbody>
+	<actuator >
+	<!--<motor name="slider_motor" joint="slider_joint" ctrlrange="-1 1" ctrllimited="true" forcerange="-0.1 0.1" forcelimited="true" />-->
+	</actuator>
 </mujoco>
