@@ -56,6 +56,8 @@ class MujocoEnv(gym.Env):
                 __file__), "assets", model_path)
         if not path.exists(fullpath):
             raise IOError("File %s does not exist" % fullpath)
+
+        self.image_size = image_size
         self.frame_skip = frame_skip
         self.model = mujoco_py.load_model_from_path(fullpath)
         self.sim = mujoco_py.MjSim(self.model)
@@ -65,7 +67,7 @@ class MujocoEnv(gym.Env):
 
         self.metadata = {
             "render.modes": ["human", "rgb_array", "depth_array"],
-            "video.frames_per_second": int(np.round(0.01 / self.dt)),
+            "video.frames_per_second": int(np.round(1.0 / self.dt)),
         }
 
         self.init_qpos = self.sim.data.qpos.ravel().copy()
@@ -143,10 +145,11 @@ class MujocoEnv(gym.Env):
     def render(
         self,
         mode="human",
+        width=DEFAULT_SIZE,
+        height=DEFAULT_SIZE,
         camera_id=None,
         camera_name=None,
     ):
-        width, height = (self.image_size, self.image_size)
         if mode == "rgb_array" or mode == "depth_array":
             if camera_id is not None and camera_name is not None:
                 raise ValueError(
@@ -192,8 +195,7 @@ class MujocoEnv(gym.Env):
             if mode == "human":
                 self.viewer = mujoco_py.MjViewer(self.sim)
             elif mode == "rgb_array" or mode == "depth_array":
-                self.viewer = mujoco_py.MjRenderContextOffscreen(
-                    self.sim, -1)
+                self.viewer = mujoco_py.MjRenderContextOffscreen(self.sim, -1)
 
             self.viewer_setup()
             self._viewers[mode] = self.viewer

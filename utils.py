@@ -1,12 +1,14 @@
+from tqdm import trange
+import numpy as np
 import os
 import matplotlib.pyplot as plt
-import numpy as np
 from stable_baselines3.common.callbacks import BaseCallback
 from stable_baselines3.common.logger import Image
 from stable_baselines3 import A2C, DDPG, DQN, PPO, SAC, TD3
 from sb3_contrib import ARS, QRDQN, TQC, TRPO
+from moviepy.editor import *
+import cv2
 
-from tqdm import trange
 
 ALGOS = {
     "a2c": A2C,
@@ -171,3 +173,10 @@ def evaluate_env(model, env,
             mean_force, std_force,
             mean_max_force, std_max_force,
             successes)
+
+
+def save_clip(filename="movie.mp4", frames=None, fps=30):
+    # if not os.path.exists(filename):
+        # os.makedirs(filename)
+    clip = ImageSequenceClip(frames, fps=fps)
+    clip.write_videofile(filename, fps=fps)

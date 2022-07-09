@@ -57,7 +57,7 @@
 			<geom type="mesh" material="sns-green" contype="0" conaffinity="0"/>
 		</default>
 		<default class="slider">
-			<joint axis="0 1 0" limited="true" damping="1" armature="0" type="slide"/>
+			<joint axis="0 1 0" limited="true" damping="0" armature="0" type="slide"/>
 			<motor ctrlrange="-1. 1." ctrllimited="true"/>
 			<geom type="mesh" material="sns-purple" contype="0" conaffinity="0"/>
 		</default>
@@ -101,8 +101,8 @@
 					</body>
 				</body>
 				<!-- slider_middle -->
-				<body name="slider_middle_body">
-					<joint name="slider_middle" range="0 0.0724" class="slider"/>
+				<body name="slider_middle_body" pos="0 -0.05 0">
+					<joint name="slider_middle" range="0 0.1136" class="slider"/>
 					<geom mesh="slider_middle_body" class="slider"/>
 					<body name="slider_middle_wheel_lower_body">
 						<joint name="slider_middle_wheel_lower" class="wheel_low" pos=".0076207 .56155 1.04172"/>
@@ -112,28 +112,28 @@
 						<joint name="slider_middle_wheel_upper"  type="hinge" class="wheel_up" pos="0.0076103 -0.56042 1.07725"/>
 						<geom mesh="slider_middle_wheel_upper" class="wheel_up"/>
 					</body>
-				</body>
-				<!-- rail_upper -->
-				<body name="rail_upper_body">
-					<geom type="mesh" mesh="rail_upper" material="sns-green" contype="0" conaffinity="0"/>
-					<geom type="mesh" mesh="rail_upper_support" material="sns-blue" contype="0" conaffinity="0"/>
+					<!-- rail_upper -->
+					<body name="rail_upper_body" pos="0 0.031 0">
+						<geom type="mesh" mesh="rail_upper" material="sns-green" contype="0" conaffinity="0"/>
+						<geom type="mesh" mesh="rail_upper_support" material="sns-blue" contype="0" conaffinity="0"/>
 
-					<body name="slider_upper_body">
-						<joint name="slider_upper" range="-0.04891 0" class="slider"/>
-						<geom mesh="slider_upper_body" class="slider"/>
-						<body>
-							<joint name="slider_upper_clamp_left" class="clamp"/>
-							<geom mesh="slider_upper_clamp_left" class="clamp"/>
-						</body>
-						<body>
-							<joint name="slider_upper_clamp_right" axis="-1 0 0" class="clamp"/>
-							<geom mesh="slider_upper_clamp_right" class="clamp"/>
+						<body name="slider_upper_body" >
+							<joint name="slider_upper" range="-0.04891 0" class="slider"/>
+							<geom mesh="slider_upper_body" class="slider"/>
+							<body>
+								<joint name="slider_upper_clamp_left" class="clamp"/>
+								<geom mesh="slider_upper_clamp_left" class="clamp"/>
+							</body>
+							<body>
+								<joint name="slider_upper_clamp_right" axis="-1 0 0" class="clamp"/>
+								<geom mesh="slider_upper_clamp_right" class="clamp"/>
+							</body>
 						</body>
 					</body>
 				</body>
 				<!-- slider_rear -->
 				<body name="slider_rear_body">
-					<joint name="slider_rear" range="0 0.04719" class="slider"/>
+					<joint name="slider_rear" range="0 0.1136" class="slider"/>
 					<geom mesh="slider_rear_body" class="slider"/>
 					<body name="slider_rear_wheel_lower_body">
 						<joint name="slider_rear_wheel_lower"  class="wheel_low" pos="0.0078395 -.78808 1.04179"/>
@@ -159,20 +159,20 @@
 
 	<actuator>
 		<!-- slider_front -->
-		<motor name="slider_front_motor" joint="slider_front" class="slider"/>
-		<motor name="slider_front_clamp_left_motor" joint="slider_front_clamp_left" class="clamp"/>
-		<motor name="slider_front_clamp_right_motor" joint="slider_front_clamp_right" class="clamp"/>
+		<!--<motor name="slider_front_motor" joint="slider_front" class="slider"/>-->
+		<!--<motor name="slider_front_clamp_left_motor" joint="slider_front_clamp_left" class="clamp"/>-->
+		<!--<motor name="slider_front_clamp_right_motor" joint="slider_front_clamp_right" class="clamp"/>-->
 		<!-- slider_middle -->
-		<motor name="slider_middle_motor" joint="slider_middle" class="slider"/>
-		<motor name="slider_middle_wheel_lower_motor" joint="slider_middle_wheel_lower" class="wheel_low"/>
-		<motor name="slider_middle_wheel_upper_motor" joint="slider_middle_wheel_upper" class="wheel_up"/>
+		<!--<motor name="slider_middle_motor" joint="slider_middle" class="slider"/>-->
+		<!--<motor name="slider_middle_wheel_lower_motor" joint="slider_middle_wheel_lower" class="wheel_low"/>-->
+		<!--<motor name="slider_middle_wheel_upper_motor" joint="slider_middle_wheel_upper" class="wheel_up"/>-->
 		<!-- slider_upper -->
-		<motor name="slider_upper_motor" joint="slider_upper" class="slider"/>
-		<motor name="slider_upper_clamp_left_motor" joint="slider_upper_clamp_left" class="clamp"/>
-		<motor name="slider_upper_clamp_right_motor" joint="slider_upper_clamp_right" class="clamp"/>
+		<!--<motor name="slider_upper_motor" joint="slider_upper" class="slider"/>-->
+		<!--<motor name="slider_upper_clamp_left_motor" joint="slider_upper_clamp_left" class="clamp"/>-->
+		<!--<motor name="slider_upper_clamp_right_motor" joint="slider_upper_clamp_right" class="clamp"/>-->
 		<!-- slider_rear -->
-		<motor name="slider_rear_motor" joint="slider_rear" class="slider"/>
-		<motor name="slider_rear_wheel_lower_motor" joint="slider_rear_wheel_lower" class="wheel_low"/>
-		<motor name="slider_rear_wheel_upper_motor" joint="slider_rear_wheel_upper" class="wheel_up"/>
+		<!--<motor name="slider_rear_motor" joint="slider_rear" class="slider"/>-->
+		<!--<motor name="slider_rear_wheel_lower_motor" joint="slider_rear_wheel_lower" class="wheel_low"/>-->
+		<!--<motor name="slider_rear_wheel_upper_motor" joint="slider_rear_wheel_upper" class="wheel_up"/>-->
 	</actuator>
 </mujoco>

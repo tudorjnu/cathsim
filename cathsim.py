@@ -245,7 +245,7 @@ def make_env(rank, scene, target, obs_type, image_size, n_frames, seed):
 if __name__ == "__main__":
 
     env = CathSimEnv(scene=1,
-                     obs_type="image",
+                     obs_type="internal",
                      target="lcca",
                      image_size=128,
                      n_frames=4)
@@ -257,3 +257,7 @@ if __name__ == "__main__":
     while not done:
         action = env.action_space.sample()
         obs, reward, done, info = env.step(action)
+        image = env.render("rgb_array", width=1080, height=1080, camera_name="top_camera")
+        cv2.imshow("image", image)
+        cv2.waitKey(1)
+        # env.render()
