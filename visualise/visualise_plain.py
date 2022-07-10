@@ -1,11 +1,13 @@
-import numpy as np
-import cv2
-import os
-from cathsim import CathSimEnv
-from utils import ALGOS
-from gym.wrappers import TimeLimit
-from stable_baselines3.common.evaluation import evaluate_policy
+import os, sys
+p = os.path.abspath('.')
+sys.path.insert(1, p)
 from moviepy.editor import *
+from stable_baselines3.common.evaluation import evaluate_policy
+from gym.wrappers import TimeLimit
+from utils import ALGOS, save_clip
+from cathsim import CathSimEnv
+import cv2
+import numpy as np
 
 EP_LENGTH = 2000
 
@@ -69,40 +71,33 @@ if __name__ == "__main__":
 
     model = algorithm.load(model_path, env=env)
 
-    # mean_reward, std_reward = evaluate_policy(
-    # model, model.get_env(), n_eval_episodes=10)
-    # print(f"Mean reward: {mean_reward:.2f} +/- {std_reward:.2f}")
-
     for episode in range(10):
         obs = env.reset()
         done = False
-        frames = []
+
         clip_name = f'scene-{scene}_target-{target}_{episode}.mp4'
         clip_name = os.path.join(VIDEOS_PATH, clip_name)
+
         number_frame_name = f'scene-{scene}_target-{target}_{episode}_number.mp4'
         number_frame_name = os.path.join(VIDEOS_PATH, number_frame_name)
+
+        frames = []
         number_frames = []
         for i in range(EP_LENGTH):
             action, _states = model.predict(obs)
             obs, rewards, done, info = env.step(action)
-            top_view = env.get_image("top_view")
-            number_frame = write_number(str(round(rewards, 7)))
-            # side_view = env.get_image("side_view")
-            # frame = np.concatenate([top_view, side_view], axis=1)
-            frame = top_view
-            frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2RGB)
-            # cv2.imwrite("image.png", frame)
-            # cv2.imwrite("number.png", number_frame)
-            # exit()
+
+            frame = env.render(mode="rgb_array", camera="top_view",
+                               height=128, width=128)
             frames.append(frame)
+
+            number_frame = write_number(rewards)
             number_frames.append(number_frame)
             if done:
                 break
                 exit()
 
-        clip = ImageSequenceClip(frames, fps=15)
-        clip.write_videofile(clip_name, fps=15)
-        number_clip = ImageSequenceClip(number_frames, fps=15)
-        number_clip.write_videofile(number_frame_name, fps=15)
+        save_clip(clip_name, frames)
+        save_clip(number_frame_name, number_frames)
 
     env.close()
