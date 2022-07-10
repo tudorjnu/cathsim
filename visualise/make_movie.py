@@ -1,4 +1,6 @@
-import os
+import os, sys
+p = os.path.abspath('.')
+sys.path.insert(1, p)
 from cathsim import CathSimEnv
 from utils import ALGOS, save_clip
 import numpy as np
@@ -76,6 +78,8 @@ if __name__ == "__main__":
         obs, rewards, done, info = env.step(action)
         image = env.render(mode="rgb_array", width=1080,
                            height=1080, camera_name="top_camera")
+        cv2.imshow("frame", image)
+        cv2.waitKey(1)
         number_frame = write_number(number=rewards)
         frames.append(image)
         number_frames.append(number_frame)
