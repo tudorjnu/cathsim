@@ -1,0 +1,14 @@
+<mujoco model="catheter_template">
+  <worldbody>
+    <body name="B0" pos="0.0076103 -0.98000 1.07725" euler="0 0 90">
+      <joint name="slider_joint" pos="0 0 0" axis="1 0 0" type="slide" limited="true" range="0 0.5"/>
+      <composite type="rope" count="100 1 1" spacing="0.0072" offset="0 0 2">
+        <joint kind="main" damping="0.005"/>
+		<geom type="capsule" size=".0018 .003" rgba="0.2 0.2 0.2 1" group="1"/>
+      </composite>
+    </body>
+  </worldbody>
+  <actuator>
+    <motor name="slider_motor" joint="slider_joint" ctrlrange="-1 1" ctrllimited="true" forcelimited="true" forcerange="-0.025 0.025"/>
+  </actuator>
+</mujoco>

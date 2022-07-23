@@ -1,0 +1,18 @@
+<mujoco model="scene_2">
+	<include file="phantom_2.xml"/>
+	<include file="mjmodel.xml"/>
+	<include file="cylinder.xml"/> 
+	<include file="scene.xml"/>
+	<!--<include file="camera_body.xml"/>-->
+	<!--<include file="slave.xml"/> -->
+	<default>
+		<default class="scene">
+			<geom type="mesh" contype="0" conaffinity="0"/>
+			<site type="sphere" rgba="0.25, 0.5, 0.96 0.7" size="0.008"/>
+		</default>
+	</default>
+	<worldbody>
+		<!--<site name="target_bca" class="scene" pos="-0.013049 -0.077002 1.0384"/>-->
+		<!--<site name="target_lcca" class="scene" pos="0.019936 -0.048568 1.0315"/>-->
+	</worldbody>
+</mujoco>

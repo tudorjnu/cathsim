@@ -1,22 +1,54 @@
-# Gym Examples
-Some simple examples of Gym environments and wrappers.
-For some explanations of these examples, see the [Gym documentation](https://www.gymlibrary.ml).
+# CathSim
+## Installation Procedure
 
-### Environments
-This repository hosts the examples that are shown [on the environment creation documentation](https://www.gymlibrary.ml/pages/environment_creation/index).
-- `GridWorldEnv`: Simplistic implementation of gridworld environment
+1. Download [MuJoCo](https://github.com/deepmind/mujoco/releases/download/2.1.0/mujoco210-linux-x86_64.tar.gz)
+2. Install Dependencies
 
-### Wrappers
-This repository hosts the examples that are shown [on wrapper documentation](https://www.gymlibrary.ml/pages/wrappers/index).
-- `ClipReward`: A `RewardWrapper` that clips immediate rewards to a valid range
-- `DiscreteActions`: An `ActionWrapper` that restricts the action space to a finite subset
-- `RelativePosition`: An `ObservationWrapper` that computes the relative position between an agent and a target
-- `ReacherRewardWrapper`: Allow us to weight the reward terms for the reacher environment
+```
+sudo apt install libosmesa6-dev libgl1-mesa-glx libglfw3
+```
 
-### Contributing
-If you would like to contribute, follow these steps:
-- Fork this repository
-- Clone your fork
-- Set up pre-commit via `pre-commit install`
+3. Add the following to the `.bashrc` file:
 
-PRs may require accompanying PRs in [the documentation repo](https://github.com/Farama-Foundation/gym-docs).
+```
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/user/.mujoco/mujoco210/bin
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/nvidia
+export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libGLEW.so
+```
+
+4. Install the environment
+
+```
+git clone git@github.com:tudorjnu/cathsim.git
+cd cathsim
+pip install -e .
+```
+
+## Quick start
+
+```
+import cathsim_env
+import gym
+
+scene = 1  # 1 or 2 for Type-I Aortic Arch and Type-II Aortic Arch
+target = "bca"  # "bca" or "lcca"
+obs_type = "internal"  # image or internal
+image_size = 128
+delta = 0.008  # the distance threshold between catheter head and target
+success_reward = 10.0  # the reward for reaching the target
+compute_force = False  # whether to compute the force
+dense_reward = True  # whether to use a dense reward or a sparse reward
+
+env = gym.make('cathsim_env/CathSim-v0', scene=scene, target=target,
+               obs_type=obs_type, image_size=image_size, delta=delta,
+               success_reward=success_reward, compute_force=compute_force,
+               dense_reward=dense_reward)
+
+obs = env.reset()
+for _ in range(2000):
+    action = env.action_space.sample()
+    obs, reward, done, info = env.step(action)
+    env.render()
+```
+
+

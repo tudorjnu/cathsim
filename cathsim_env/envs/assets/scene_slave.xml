@@ -1,0 +1,28 @@
+<mujoco model="scene_1">
+	<include file="phantom_1.xml"/>
+	<include file="slave.xml"/> 
+	<!--<include file="mjmodel.xml"/>-->
+	<include file="catheter_template.xml"/>
+	<include file="cylinder.xml"/> 
+	<!--<include file="camera_body.xml"/>-->
+	<include file="scene.xml"/>
+	<!--<asset >-->
+		<!--<texture type="skybox" builtin="gradient" rgb1="1 1 1" rgb2="1 1 1" width="512" height="512"/>-->
+		<!--<texture name="texplane" type="2d" builtin="gradient" rgb1="1 1 1" rgb2="1 1 1" width="512" height="512" />-->
+		<!--<material name="matplane" reflectance="0" />-->
+	<!--</asset>-->
+	<default>
+		<default class="scene">
+			<geom type="mesh" contype="0" conaffinity="0"/>
+			<site type="sphere" rgba="0.25, 0.5, 0.96 0.7" size="0.008"/>
+		</default>
+	</default>
+	<worldbody>
+		<!--<geom type="plane" size="1 1 1" rgba="1 1 1 0"/>-->
+		<!--<light directional="true" diffuse=".2 .2 .2" specular="0 0 0" pos="0 0 5" dir="0 0 -1" castshadow="false"/>-->
+		<!--<light directional="true" diffuse=".2 .2 .2" specular="0 0 0" pos="0 0 0" dir="0 0 1" castshadow="false"/>-->
+		<!--<light directional="false" diffuse=".8 .8 .8" specular="0.3 0.3 0.3" pos="0 0 4.0" dir="0 0 -1" castshadow="false"/>-->
+		<!--<site name="target_bca" class="scene" pos="-0.029918 0.035143 1.0431"/>-->
+		<!--<site name="target_lcca" class="scene" pos="0.003474 0.035143 1.0357"/>-->
+	</worldbody>
+</mujoco>
