@@ -3,6 +3,8 @@ blender/
 benchmarking/
 others/
 backups/
+experiments/
+cathsim_env.egg-info/
 decomp.obj
 load_modules.sh
 mujoco_env_2.py

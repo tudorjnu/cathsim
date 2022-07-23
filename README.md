@@ -1,24 +1,22 @@
-# Installation Procedure
+# Gym Examples
+Some simple examples of Gym environments and wrappers.
+For some explanations of these examples, see the [Gym documentation](https://www.gymlibrary.ml).
 
-1. Download [MuJoCo](https://github.com/deepmind/mujoco/releases/download/2.1.0/mujoco210-linux-x86_64.tar.gz)
-2. Install Dependencies
+### Environments
+This repository hosts the examples that are shown [on the environment creation documentation](https://www.gymlibrary.ml/pages/environment_creation/index).
+- `GridWorldEnv`: Simplistic implementation of gridworld environment
 
-```
-sudo apt install libosmesa6-dev libgl1-mesa-glx libglfw3
-```
+### Wrappers
+This repository hosts the examples that are shown [on wrapper documentation](https://www.gymlibrary.ml/pages/wrappers/index).
+- `ClipReward`: A `RewardWrapper` that clips immediate rewards to a valid range
+- `DiscreteActions`: An `ActionWrapper` that restricts the action space to a finite subset
+- `RelativePosition`: An `ObservationWrapper` that computes the relative position between an agent and a target
+- `ReacherRewardWrapper`: Allow us to weight the reward terms for the reacher environment
 
-3. Add the following to the `.bashrc` file:
+### Contributing
+If you would like to contribute, follow these steps:
+- Fork this repository
+- Clone your fork
+- Set up pre-commit via `pre-commit install`
 
-```
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/user/.mujoco/mujoco210/bin
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/nvidia
-export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libGLEW.so
-```
-
-
-
-4. Install all the required libraries with `conda`, using the `environment.yml` file:
-
-```
-conda env create --file environment.yml
-```
+PRs may require accompanying PRs in [the documentation repo](https://github.com/Farama-Foundation/gym-docs).
