@@ -3,7 +3,7 @@
 	<compiler meshdir="meshes" angle="degree"/>
 	<option gravity="0 0 0" cone="elliptic" density="1000" viscosity="0.0009" solver="PGS" >
 		<flag frictionloss="disable"/>
-    </option>
+        </option>
 	<asset >
 		<texture type="skybox" builtin="gradient" rgb1="1 1 1" rgb2="1 1 1" width="512" height="512"/>
 		<texture name="texplane" type="2d" builtin="gradient" rgb1="1 1 1" rgb2="1 1 1" width="512" height="512" />

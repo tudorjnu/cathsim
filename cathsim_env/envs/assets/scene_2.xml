@@ -1,6 +1,6 @@
 <mujoco model="scene_2">
 	<include file="phantom_2.xml"/>
-	<include file="mjmodel.xml"/>
+	<include file="catheter.xml"/>
 	<include file="cylinder.xml"/> 
 	<include file="scene.xml"/>
 	<!--<include file="camera_body.xml"/>-->
