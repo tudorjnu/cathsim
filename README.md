@@ -20,9 +20,11 @@ sudo apt install libosmesa6-dev libgl1-mesa-glx libglfw3
 3. Add the following to the `.bashrc` file:
 
 ```bash
+cat <<EOT >> .bashrc
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/user/.mujoco/mujoco210/bin
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/nvidia
 export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libGLEW.so
+EOT
 ```
 
 4. Install the environment
