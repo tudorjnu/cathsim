@@ -4,13 +4,13 @@
 1. Download [MuJoCo](https://github.com/deepmind/mujoco/releases/download/2.1.0/mujoco210-linux-x86_64.tar.gz)
 2. Install Dependencies
 
-```
+```bash
 sudo apt install libosmesa6-dev libgl1-mesa-glx libglfw3
 ```
 
 3. Add the following to the `.bashrc` file:
 
-```
+```bash
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/user/.mujoco/mujoco210/bin
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/nvidia
 export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libGLEW.so
@@ -18,7 +18,7 @@ export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libGLEW.so
 
 4. Install the environment
 
-```
+```bash
 git clone git@github.com:tudorjnu/cathsim.git
 cd cathsim
 pip install -e .
@@ -26,7 +26,7 @@ pip install -e .
 
 ## Quick start
 
-```
+```python
 import cathsim_env
 import gym
 
