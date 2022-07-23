@@ -2,7 +2,16 @@
 ## Installation Procedure
 
 1. Download [MuJoCo](https://github.com/deepmind/mujoco/releases/download/2.1.0/mujoco210-linux-x86_64.tar.gz)
-2. Install Dependencies
+
+```bash
+mkdir .mujoco
+cd .mujoco
+wget https://github.com/deepmind/mujoco/releases/download/2.1.0/mujoco210-linux-x86_64.tar.gz
+tar xvzf mujoco210-linux-x86_64.tar.gz
+rm -rf mujoco210-linux-x86_64.tar.gz
+```
+
+3. Install Dependencies
 
 ```bash
 sudo apt install libosmesa6-dev libgl1-mesa-glx libglfw3
