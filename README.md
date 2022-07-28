@@ -1,7 +1,5 @@
 # CathSim
 
-![CathSim](./images/cathsim.png)
-
 ## Installation Procedure
 
 1. Download [MuJoCo](https://github.com/deepmind/mujoco/releases/download/2.1.0/mujoco210-linux-x86_64.tar.gz)
