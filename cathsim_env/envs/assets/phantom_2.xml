@@ -2,7 +2,7 @@
 	<compiler meshdir="meshes"/>
 	<default>
 		<default class="phantom">
-			<geom rgba=".99 .15  .15 0" group="0"/> 
+			<geom rgba=".99 .15  .15 0" group="0" margin="0.001"/> 
 		</default>
 	</default>
 	<asset>
