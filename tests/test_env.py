@@ -16,7 +16,11 @@ env = gym.make('cathsim_env/CathSim-v0', scene=scene, target=target,
                dense_reward=dense_reward)
 
 obs = env.reset()
-for _ in range(2000):
+for _ in range(2):
     action = env.action_space.sample()
     obs, reward, done, info = env.step(action)
-    env.render()
+    print("obs: ", obs.shape)
+    print("reward: ", reward)
+    print("done: ", done)
+    for k, v in info.items():
+        print(k, v)
