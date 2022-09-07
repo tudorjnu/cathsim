@@ -12,6 +12,7 @@ run.sh
 scene_test.xml
 scratch.backup.ipynb
 MUJOCO_LOG.TXT
+catheter_template.xml
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
