@@ -61,4 +61,15 @@ for _ in range(2000):
     env.render()
 ```
 
+## Citation
+```
+@article{jianu2022cathsim,
+  title={CathSim: An Open-source Simulator for Autonomous Cannulation},
+  author={Jianu, Tudor and Huang, Baoru and Abdelaziz, Mohamed EMK and Vu, Minh Nhat and Fichera, Sebastiano and Lee, Chun-Yi and Berthet-Rayne, Pierre and Nguyen, Anh and others},
+  journal={arXiv preprint arXiv:2208.01455},
+  year={2022}
+}
+```
+
+
 
