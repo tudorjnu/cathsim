@@ -4,13 +4,33 @@
 
 ## Installation Procedure
 
-1. Install the environment
-
 ```bash
 git clone -b git@github.com:tudorjnu/cathsim.git
 cd cathsim
 pip install -e .
 ```
+
+## Quickstart
+
+A quick way to have the enviromnent run with gym is to make use of the `make_env` function. The function automatically configures the environment and wraps it in a gym compatible environment. 
+
+```python
+from cathim.utils import make_env
+
+env = make_env(
+    flatten_obs=True,
+    time_limit=300,
+    normalize_obs=True,
+    frame_stack=1,
+)
+
+obs = env.reset()
+for _ in range(1):
+    action = env.action_space.sample()
+    obs, rewards, dones, info = env.step(action)
+    print(obs, rewards, dones, info)
+```
+
 
 ## Citation
 ```
