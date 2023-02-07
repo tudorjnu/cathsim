@@ -40,8 +40,7 @@ def process_transitions(trial_path: str, images: bool = False):
 def make_env(flatten_obs: bool = True, time_limit: int = 200,
              normalize_obs: bool = True, frame_stack: int = 1,
              render_kwargs: dict = None, env_kwargs: dict = None,
-             gym_version: str = 'gym', wrap_monitor: bool = False,
-             task_kwargs: dict = {}):
+             gym_version: str = 'gym', task_kwargs: dict = {}):
     """
     Create a gym environment from cathsim, dm_control environment.
 
@@ -95,9 +94,6 @@ def make_env(flatten_obs: bool = True, time_limit: int = 200,
         env = wrappers.NormalizeObservation(env)
     if frame_stack > 1:
         env = wrappers.FrameStack(env, frame_stack)
-    if wrap_monitor:
-        from stable_baselines3.common.monitor import Monitor
-        env = Monitor(env)
     return env
 
 
