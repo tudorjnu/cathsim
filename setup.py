@@ -1,7 +1,32 @@
-from setuptools import setup
+from setuptools import setup, find_packages
+
+extra_dev = [
+    'opencv-python',
+    'matplotlib',
+]
+
 
 setup(
-    name="cathsim_env",
-    version="0.0.1",
-    install_requires=["gym==0.21.0", "mujoco_py==2.1.2.14"],
+    name='cathsim',
+    version='dev',
+    url='git@github.com:tudorjnu/packaging_test.git',
+    author='Author',
+    author_email='my_email',
+    packages=find_packages(
+        exclude=[
+            'rl'
+        ]
+    ),
+    install_requires=[
+        'dm_control',
+        'gym==0.21.*',
+    ],
+    extras_require={
+        'dev': extra_dev,
+    },
+    entry_points={
+        'console_scripts': [
+            'run_env=cathsim.env:run_env',
+        ],
+    },
 )
