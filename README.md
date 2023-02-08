@@ -4,6 +4,15 @@
 
 ## Installation Procedure
 
+1. If using a `conda environment`:
+
+```bash
+conda create -n cathsim python=3.9
+conda activate cathsim
+```
+
+2. Install the environment:
+
 ```bash
 git clone -b git@github.com:tudorjnu/cathsim.git
 cd cathsim
@@ -20,7 +29,7 @@ from cathim.utils import make_env
 env = make_env(
     flatten_obs=True,
     time_limit=300,
-    normalize_obs=True,
+    normalize_obs=False,
     frame_stack=1,
 )
 
