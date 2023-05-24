@@ -6,7 +6,7 @@ from dm_control import mjcf
 from dm_control.mujoco.wrapper import mjbindings
 import numpy as np
 from cathsim.cathsim import Scene, Guidewire, Tip, Navigate
-from cathsim.wrappers import DMEnvironmentWrapper
+from cathsim.wrappers.gym_wrapper import DMEnv
 
 mjlib = mjbindings.mjlib
 
@@ -96,7 +96,7 @@ class NavigateTest(parameterized.TestCase):
             strip_singleton_obs_buffer_dim=True,
         )
 
-        env = DMEnvironmentWrapper(env)
+        env = DMEnv(env)
 
         self.assertTrue(env.observation_space['pixels'].shape == (64, 64, 3))
 

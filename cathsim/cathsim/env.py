@@ -1,16 +1,19 @@
 import math
+import cv2
 import yaml
 import numpy as np
 from pathlib import Path
 
+
 from dm_control import mjcf
+from dm_control import mujoco
 from dm_control.mujoco import wrapper
 from dm_control import composer
 from dm_control.composer import variation
 from dm_control.composer.variation import distributions, noises
 from dm_control.composer.observation import observable
 from cathsim.cathsim.phantom import Phantom
-from cathsim.cathsim.common import CameraObservable
+from cathsim.cathsim.common import CameraObservable, point2pixel
 from cathsim.cathsim.env_utils import distance
 
 with open(Path(__file__).parent / 'env_config.yaml', 'r') as f:
@@ -375,6 +378,7 @@ class Navigate(composer.Task):
         self.tip_joints = [joint.name for joint in self._tip.joints]
 
         self.set_target(target)
+        self.camera_matrix = None
 
     @ property
     def root_entity(self):
@@ -440,10 +444,35 @@ class Navigate(composer.Task):
         velocities = physics.named.data.qvel
         return velocities
 
-    def get_contact_forces(self, physics):
+    def get_force(self, physics):
         forces = physics.data.qfrc_constraint[0:3]
         forces = np.linalg.norm(forces)
         return forces
+
+    def get_contact_forces(self, physics, threshold=0.01, to_pixels=True, image_size=64):
+        if self.camera_matrix is None:
+            self.camera_matrix = self.get_camera_matrix(physics, image_size)
+        data = physics.data
+        forces = {'pos': [], 'force': []}
+        for i in range(data.ncon):
+            if data.contact[i].dist < 0.002:
+                force = data.contact_force(i)[0][0]
+                if abs(force) > threshold:
+                    pass
+                else:
+                    forces['force'].append(force)
+                    pos = data.contact[i].pos
+                    if to_pixels is not None:
+                        pos = point2pixel(pos, self.camera_matrix)
+                    forces['pos'].append(pos)
+        return forces
+
+    def get_camera_matrix(self, physics, image_size: int = None, camera_id=0):
+        from dm_control.mujoco.engine import Camera
+        if image_size is None:
+            image_size = self.image_size
+        camera = Camera(physics, height=image_size, width=image_size, camera_id=camera_id)
+        return camera.matrix
 
 
 def run_env(args=None):
@@ -477,72 +506,19 @@ def run_env(args=None):
         random_state=np.random.RandomState(42),
         strip_singleton_obs_buffer_dim=True,
     )
-    physics = env.physics
-    print(phantom.sites[target])
-    print(env._task._target_pos)
-    # print(env._task.get_head_pos(physics))
-    assert (phantom.sites[target] == env._task._target_pos).all(), \
-        f"{phantom.sites[target]} != {env._task._target_pos}"
-    assert (env._task.get_reward(physics) == env._task.compute_reward(
-        env._task.get_head_pos(physics), env._task._target_pos)), \
-        f"{env._task.get_reward(physics)} != {env._task.compute_reward(env._task.get_head_pos(physics), env._task._target_pos)}"
-    exit()
 
     def random_policy(time_step):
-        del time_step  # Unused.
+        del time_step  # Unused
         return [0, 0]
 
+    launch(env, policy=random_policy)
+
     # Launch the viewer application.
-    # if parsed_args.interact:
-    #     from cathsim.cathsim.env_utils import launch
-    #     launch(env)
-    # else:
-    #     launch(env, policy=random_policy)
-
-    # camera = mujoco.Camera(env.physics, 480, 480, 0)
-    # print(camera.matrix)
-    # exit()
-
-    env.reset()
-
-    for k, v in env.observation_spec().items():
-        print(k, v.dtype, v.shape)
-
-    def plot_obs(obs):
-        import matplotlib.pyplot as plt
-        import cv2
-        top_camera = obs['pixels']
-        guidewire = obs['guidewire']
-        # phantom = obs['phantom']
-        # top_camera = cv2.cvtColor(top_camera, cv2.COLOR_RGB2GRAY)
-
-        # plot the phantom and guidewire in subplot
-        fig, ax = plt.subplots(1, 2)
-        ax[0].imshow(top_camera)
-        ax[0].axis('off')
-        ax[0].set_title('top_camera')
-        ax[1].imshow(guidewire)
-        ax[1].set_title('guidewire segmentation')
-        ax[1].axis('off')
-        # ax[2].imshow(phantom)
-        # ax[2].set_title('phantom segmentation')
-        # ax[2].axis('off')
-        plt.show()
-        # exit()
-
-        # plt.imsave('./figures/phantom_mask.png', np.squeeze(phantom))
-        plt.imsave('./figures/phantom_2.png', top_camera)
-        # cv2.imwrite('./figures/phantom.png', top_camera)
-        exit()
-
-    for i in range(100):
-        action = np.zeros(env.action_spec().shape)
-        action[0] = 1
-        timestep = env.step(action)
-        forces = env.task.get_contact_forces(env.physics)
-        plot_obs(timestep.observation)
-        exit()
-        print('forces', np.round(np.linalg.norm(forces), 2))
+    if parsed_args.interact:
+        from cathsim.cathsim.env_utils import launch
+        launch(env)
+    else:
+        launch(env, policy=random_policy)
 
 
 if __name__ == "__main__":

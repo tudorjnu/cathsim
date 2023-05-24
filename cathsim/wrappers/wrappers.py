@@ -68,7 +68,8 @@ class DMEnvToGymWrapper(gym.Env):
         done = timestep.last()
         info = dict(
             head_pos=self.head_pos.copy(),
-            forces=self.contact_forces.copy(),
+            forces=self.force.copy(),
+            contact_forces=self.contact_forces.copy(),
         )
         return observation, reward, done, info
 
@@ -101,8 +102,12 @@ class DMEnvToGymWrapper(gym.Env):
         return self._env._task.get_head_pos(self.physics)
 
     @property
+    def force(self):
+        return self._env._task.get_force(self.physics)
+
+    @property
     def contact_forces(self):
-        return self._env._task.get_contact_forces(self.physics)
+        return self._env._task.get_contact_forces(self.physics, self.image_size)
 
     @property
     def physics(self):
