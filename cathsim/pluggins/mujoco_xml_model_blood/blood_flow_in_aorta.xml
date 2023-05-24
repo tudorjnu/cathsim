@@ -33,7 +33,7 @@
       <geom type="plane" size=".5 .5 .05"/>
     </default>
   </default>
-  <compiler meshdir="../../cathsim/assets/meshes" angle ="degree"/>
+  <compiler meshdir="../../assets/meshes" angle ="degree"/>
   <asset>
     <mesh scale="4 4 4" name="phantom3" file="phantom3/phantom3.stl" />
     <mesh scale="4 4 4" name="phantom3_hull_0" file="phantom3/phantom3_hull_0.stl" />
