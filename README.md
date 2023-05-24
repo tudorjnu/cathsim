@@ -8,7 +8,8 @@
 
 ```bash
 conda create -n cathsim python=3.9
-conda activate cathsim
+conda activate CathSim
+pip install setuptools==58.2.0
 ```
 
 2. Install the environment:
