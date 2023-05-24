@@ -22,7 +22,7 @@ pip install -e .
 
 ## Quickstart
 
-A quick way to have the enviromnent run with gym is to make use of the `make_env` function. The function automatically configures the environment and wraps it in a gym compatible environment. 
+A quick way to have the enviromnent run with gym is to make use of the `make_dm_env` function and then wrap the resulting environment into a `DMEnvToGymWrapper` resulting in a `gym.Env`.
 
 ```python
 from cathsim.cathsim.env_utils import make_dm_env
