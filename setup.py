@@ -3,6 +3,7 @@ from setuptools import setup, find_packages
 extra_dev = [
     'opencv-python',
     'matplotlib',
+    'pytest',
 ]
 
 extra_rl = [
