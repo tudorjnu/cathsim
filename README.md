@@ -8,7 +8,7 @@
 
 ```bash
 conda create -n cathsim python=3.9
-conda activate CathSim
+conda activate cathsim
 pip install setuptools==58.2.0
 ```
 
