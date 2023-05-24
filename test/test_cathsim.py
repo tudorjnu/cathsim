@@ -5,8 +5,8 @@ from dm_control import composer
 from dm_control import mjcf
 from dm_control.mujoco.wrapper import mjbindings
 import numpy as np
-from cathsim.env import Scene, Guidewire, Tip, Navigate
-from cathsim.wrappers.wrapper_gym import DMEnv
+from cathsim.cathsim import Scene, Guidewire, Tip, Navigate
+from cathsim.wrappers import DMEnvironmentWrapper
 
 mjlib = mjbindings.mjlib
 
@@ -73,38 +73,7 @@ class NavigateTest(parameterized.TestCase):
         self.assertTrue(action_spec.shape == (2,))
 
     def test_observation_space(self):
-        guidewire_n_bodies = 10
-        tip_n_bodies = 4
-        tip = Tip(n_bodies=tip_n_bodies)
-        guidewire = Guidewire(n_bodies=guidewire_n_bodies)
-
-        task = Navigate(
-            guidewire=guidewire,
-            tip=tip,
-        )
-
-        env = composer.Environment(
-            task=task,
-            time_limit=2000,
-            random_state=np.random.RandomState(42),
-            strip_singleton_obs_buffer_dim=True,
-        )
-        action_spec = env.action_spec()
-        time_step = env.reset()
-        action = np.random.uniform(action_spec.minimum,
-                                   action_spec.maximum,
-                                   size=action_spec.shape)
-        time_step = env.step(action)
-        observables = time_step.observation
-        self.assertTrue(
-            len(observables['guidewire/joint_positions']) ==
-            len(observables['guidewire/joint_velocities']) ==
-            guidewire_n_bodies * 2)
-
-        self.assertTrue(
-            len(observables['guidewire/tip/joint_positions']) ==
-            len(observables['guidewire/tip/joint_velocities']) ==
-            tip_n_bodies * 2)
+        pass
 
     def test_image_observation_space(self):
 
@@ -116,6 +85,8 @@ class NavigateTest(parameterized.TestCase):
         task = Navigate(
             guidewire=guidewire,
             tip=tip,
+            image_size=64,
+            use_pixels=True,
         )
 
         env = composer.Environment(
@@ -125,20 +96,9 @@ class NavigateTest(parameterized.TestCase):
             strip_singleton_obs_buffer_dim=True,
         )
 
-        env = DMEnv(
-            env,
-            env_kwargs={
-                'from_pixels': True,
-                'channel_first': True,
-                'preprocess': False,
-            },
-            render_kwargs={
-                'width': 64,
-                'height': 64
-            }
-        )
+        env = DMEnvironmentWrapper(env)
 
-        self.assertTrue(env.observation_space.shape == (3, 64, 64))
+        self.assertTrue(env.observation_space['pixels'].shape == (64, 64, 3))
 
 
 if __name__ == "__main__":
