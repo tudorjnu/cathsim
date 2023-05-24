@@ -19,6 +19,24 @@ def normalize_rgba(rgba: list):
     return new_rgba
 
 
+def point2pixel(point, camera_matrix: np.ndarray = None):
+    """Transforms from world coordinates to pixel coordinates."""
+    if camera_matrix is None:
+        camera_matrix = np.array([[-96.56854249, 0., 39.5, - 8.82205627],
+                                  [0., 96.56854249, 39.5, - 17.99606781],
+                                  [0., 0., 1., - 0.15]])
+
+        camera_matrix = np.array([
+            [-5.79411255e+02, 0.00000000e+00, 2.39500000e+02, - 5.33073376e+01],
+            [0.00000000e+00, 5.79411255e+02, 2.39500000e+02, - 1.08351407e+02],
+            [0.00000000e+00, 0.00000000e+00, 1.00000000e+00, - 1.50000000e-01]
+        ])
+    x, y, z = point
+    xs, ys, s = camera_matrix.dot(np.array([x, y, z, 1.0]))
+
+    return round(xs / s), round(ys / s)
+
+
 class CameraObservable(MujocoCamera):
     def __init__(self, camera_name, height=128, width=128, corruptor=None,
                  depth=False, preprocess=False, grayscale=False,
