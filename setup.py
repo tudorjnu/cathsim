@@ -15,6 +15,7 @@ extra_rl = [
     'rich',
     'mergedeep',
     'progressbar2',
+    'progress',
 ]
 
 extra = extra_dev + extra_rl
