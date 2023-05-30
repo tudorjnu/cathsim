@@ -4,23 +4,23 @@
   <meta charset="utf-8">
   <!-- Meta tags for social media banners, these should be filled in appropriatly as they are your "business card" -->
   <!-- Replace the content tag with appropriate information -->
-  <meta name="description" content="DESCRIPTION META TAG">
-  <meta property="og:title" content="SOCIAL MEDIA TITLE TAG"/>
-  <meta property="og:description" content="SOCIAL MEDIA DESCRIPTION TAG TAG"/>
-  <meta property="og:url" content="URL OF THE WEBSITE"/>
+  <meta name="description" content="Autonomous robots in endovascular operations have the potential to navigate circulatory systems safely and reliably while decreasing the susceptibility to human errors. However, there are numerous challenges involved with the process of training such robots such as long training duration due to sample inefficiency of machine learning algorithms and safety issues arising from the interaction between the catheter and the endovascular phantom. Physics simulators have been used in the context of endovascular procedures, but they are typically employed for staff training and generally do not conform to the autonomous cannulation goal. Furthermore, most current simulators are closed-source which hinders the collaborative development of safe and reliable autonomous systems. In this work, we introduce CathSim, an open-source simulation environment that accelerates the development of machine learning algorithms for autonomous endovascular navigation. We first simulate the high-fidelity catheter and aorta with the state-of-the-art endovascular robot. We then provide the capability of real-time force sensing between the catheter and the aorta in the simulation environment. We validate our simulator by conducting two different catheterisation tasks within two primary arteries using two popular reinforcement learning algorithms, Proximal Policy Optimization (PPO) and Soft Actor-Critic (SAC). The experimental results show that using our open-source simulator, we can successfully train the reinforcement learning agents to perform different autonomous cannulation tasks. ">
+  <meta property="og:title" content="CathSim: An Open-source Simulator for Autonomous Cannulation"/>
+  <meta property="og:description" content="CathSim: An Open-source Simulator for Autonomous Cannulation"/>
+  <meta property="og:url" content="https://tudorjnu.github.io/cathsim/"/>
   <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X630-->
-  <meta property="og:image" content="static/image/your_banner_image.png" />
-  <meta property="og:image:width" content="1200"/>
-  <meta property="og:image:height" content="630"/>
+  <meta property="og:image" content="static/images/cathsim.png" />
+  <meta property="og:image:width" content="1248"/>
+  <meta property="og:image:height" content="780"/>
 
 
-  <meta name="twitter:title" content="TWITTER BANNER TITLE META TAG">
-  <meta name="twitter:description" content="TWITTER BANNER DESCRIPTION META TAG">
+  <meta name="twitter:title" content="CathSim: An Open-source Simulator for Autonomous Cannulation">
+  <meta name="twitter:description" content="Autonomous robots in endovascular operations have the potential to navigate circulatory systems safely and reliably while decreasing the susceptibility to human errors. However, there are numerous challenges involved with the process of training such robots such as long training duration due to sample inefficiency of machine learning algorithms and safety issues arising from the interaction between the catheter and the endovascular phantom. Physics simulators have been used in the context of endovascular procedures, but they are typically employed for staff training and generally do not conform to the autonomous cannulation goal. Furthermore, most current simulators are closed-source which hinders the collaborative development of safe and reliable autonomous systems. In this work, we introduce CathSim, an open-source simulation environment that accelerates the development of machine learning algorithms for autonomous endovascular navigation. We first simulate the high-fidelity catheter and aorta with the state-of-the-art endovascular robot. We then provide the capability of real-time force sensing between the catheter and the aorta in the simulation environment. We validate our simulator by conducting two different catheterisation tasks within two primary arteries using two popular reinforcement learning algorithms, Proximal Policy Optimization (PPO) and Soft Actor-Critic (SAC). The experimental results show that using our open-source simulator, we can successfully train the reinforcement learning agents to perform different autonomous cannulation tasks. ">
   <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X600-->
-  <meta name="twitter:image" content="static/images/your_twitter_banner_image.png">
+  <meta name="twitter:image" content="static/images/cathsim.png">
   <meta name="twitter:card" content="summary_large_image">
   <!-- Keywords for your paper to be indexed by-->
-  <meta name="keywords" content="KEYWORDS SHOULD BE PLACED HERE">
+  <meta name="keywords" content="cathsim, endovascular navigation">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
@@ -52,28 +52,39 @@
       <div class="container is-max-desktop">
         <div class="columns is-centered">
           <div class="column has-text-centered">
-            <h1 class="title is-1 publication-title">Academic Project Page</h1>
+            <h1 class="title is-1 publication-title">CathSim: An Open-source Simulator for Autonomous Cannulation</h1>
             <div class="is-size-5 publication-authors">
               <!-- Paper authors -->
               <span class="author-block">
-                <a href="FIRST AUTHOR PERSONAL LINK" target="_blank">First Author</a><sup>*</sup>,</span>
+                <a href="FIRST AUTHOR PERSONAL LINK" target="_blank">Tudor Jianu</a>,</span>
                 <span class="author-block">
-                  <a href="SECOND AUTHOR PERSONAL LINK" target="_blank">Second Author</a><sup>*</sup>,</span>
+                  <a href="SECOND AUTHOR PERSONAL LINK" target="_blank">Baoru Huang</a>,</span>
                   <span class="author-block">
-                    <a href="THIRD AUTHOR PERSONAL LINK" target="_blank">Third Author</a>
-                  </span>
+                    <a href="THIRD AUTHOR PERSONAL LINK" target="_blank">Minh Nhat Vu</a>,</span>
+                    <span class="author-block">
+                      <a href="THIRD AUTHOR PERSONAL LINK" target="_blank">Mohamed E. M. K. Abdelaziz</a>,</span>
+                      <span class="author-block">
+                        <a href="THIRD AUTHOR PERSONAL LINK" target="_blank">Sebastiano Fichera</a>,</span>
+                        <span class="author-block">
+                          <a href="THIRD AUTHOR PERSONAL LINK" target="_blank">Chun-Yi Lee</a>,</span>
+                          <span class="author-block">
+                            <a href="THIRD AUTHOR PERSONAL LINK" target="_blank">Pierre Berthet-Rayne</a>,</span>
+                            <span class="author-block">
+                              <a href="THIRD AUTHOR PERSONAL LINK" target="_blank">Ferdinando Rodriguez y Baena</a>,</span>
+                              <span class="author-block">
+                                <a href="THIRD AUTHOR PERSONAL LINK" target="_blank">Anh Nguyen</a>,</span>
                   </div>
 
                   <div class="is-size-5 publication-authors">
-                    <span class="author-block">Institution Name<br>Conferance name and year</span>
-                    <span class="eql-cntrb"><small><br><sup>*</sup>Indicates Equal Contribution</small></span>
+                    <!-- <span class="author-block">University of Liverpool<br>Conferance name and year</span> -->
+                    <!-- <span class="eql-cntrb"><small><br><sup>*</sup>Indicates Equal Contribution</small></span> -->
                   </div>
 
                   <div class="column has-text-centered">
                     <div class="publication-links">
                          <!-- Arxiv PDF link -->
                       <span class="link-block">
-                        <a href="https://arxiv.org/pdf/<ARXIV PAPER ID>.pdf" target="_blank"
+                        <a href="https://arxiv.org/pdf/2208.01455" target="_blank"
                         class="external-link button is-normal is-rounded is-dark">
                         <span class="icon">
                           <i class="fas fa-file-pdf"></i>
@@ -95,7 +106,7 @@
 
                   <!-- Github link -->
                   <span class="link-block">
-                    <a href="https://github.com/YOUR REPO HERE" target="_blank"
+                    <a href="https://github.com/tudorjnu/cathsim" target="_blank"
                     class="external-link button is-normal is-rounded is-dark">
                     <span class="icon">
                       <i class="fab fa-github"></i>
@@ -106,7 +117,7 @@
 
                 <!-- ArXiv abstract Link -->
                 <span class="link-block">
-                  <a href="https://arxiv.org/abs/<ARXIV PAPER ID>" target="_blank"
+                  <a href="https://arxiv.org/abs/2208.01455" target="_blank"
                   class="external-link button is-normal is-rounded is-dark">
                   <span class="icon">
                     <i class="ai ai-arxiv"></i>
@@ -124,20 +135,20 @@
 
 
 <!-- Teaser video-->
-<section class="hero teaser">
-  <div class="container is-max-desktop">
-    <div class="hero-body">
-      <video poster="" id="tree" autoplay controls muted loop height="100%">
+<!-- <section class="hero teaser"> -->
+  <!-- <div class="container is-max-desktop"> -->
+    <!-- <div class="hero-body"> -->
+      <!-- <video poster="" id="tree" autoplay controls muted loop height="100%"> -->
         <!-- Your video here -->
-        <source src="static/videos/banner_video.mp4"
-        type="video/mp4">
-      </video>
-      <h2 class="subtitle has-text-centered">
-        Aliquam vitae elit ullamcorper tellus egestas pellentesque. Ut lacus tellus, maximus vel lectus at, placerat pretium mi. Maecenas dignissim tincidunt vestibulum. Sed consequat hendrerit nisl ut maximus. 
-      </h2>
-    </div>
-  </div>
-</section>
+        <!-- <source src="static/videos/banner_video.mp4" -->
+<!--         type="video/mp4"> -->
+<!--       </video> -->
+<!--       <h2 class="subtitle has-text-centered"> -->
+<!--         Aliquam vitae elit ullamcorper tellus egestas pellentesque. Ut lacus tellus, maximus vel lectus at, placerat pretium mi. Maecenas dignissim tincidunt vestibulum. Sed consequat hendrerit nisl ut maximus.  -->
+<!--       </h2> -->
+<!--     </div> -->
+<!--   </div> -->
+<!-- </section> -->
 <!-- End teaser video -->
 
 <!-- Paper abstract -->
@@ -147,8 +158,7 @@
       <div class="column is-four-fifths">
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ullamcorper tellus sed ante aliquam tempus. Etiam porttitor urna feugiat nibh elementum, et tempor dolor mattis. Donec accumsan enim augue, a vulputate nisi sodales sit amet. Proin bibendum ex eget mauris cursus euismod nec et nibh. Maecenas ac gravida ante, nec cursus dui. Vivamus purus nibh, placerat ac purus eget, sagittis vestibulum metus. Sed vestibulum bibendum lectus gravida commodo. Pellentesque auctor leo vitae sagittis suscipit.
+          <p>Autonomous robots in endovascular operations have the potential to navigate circulatory systems safely and reliably while decreasing the susceptibility to human errors. However, there are numerous challenges involved with the process of training such robots such as long training duration due to sample inefficiency of machine learning algorithms and safety issues arising from the interaction between the catheter and the endovascular phantom. Physics simulators have been used in the context of endovascular procedures, but they are typically employed for staff training and generally do not conform to the autonomous cannulation goal. Furthermore, most current simulators are closed-source which hinders the collaborative development of safe and reliable autonomous systems. In this work, we introduce CathSim, an open-source simulation environment that accelerates the development of machine learning algorithms for autonomous endovascular navigation. We first simulate the high-fidelity catheter and aorta with the state-of-the-art endovascular robot. We then provide the capability of real-time force sensing between the catheter and the aorta in the simulation environment. We validate our simulator by conducting two different catheterisation tasks within two primary arteries using two popular reinforcement learning algorithms, Proximal Policy Optimization (PPO) and Soft Actor-Critic (SAC). The experimental results show that using our open-source simulator, we can successfully train the reinforcement learning agents to perform different autonomous cannulation tasks. 
           </p>
         </div>
       </div>
@@ -165,28 +175,28 @@
       <div id="results-carousel" class="carousel results-carousel">
        <div class="item">
         <!-- Your image here -->
-        <img src="static/images/carousel1.jpg" alt="MY ALT TEXT"/>
+        <img src="static/images/cathsim.png" alt="MY ALT TEXT"/>
         <h2 class="subtitle has-text-centered">
           First image description.
         </h2>
       </div>
       <div class="item">
         <!-- Your image here -->
-        <img src="static/images/carousel2.jpg" alt="MY ALT TEXT"/>
+        <img src="static/images/cathsim.png" alt="MY ALT TEXT"/>
         <h2 class="subtitle has-text-centered">
           Second image description.
         </h2>
       </div>
       <div class="item">
         <!-- Your image here -->
-        <img src="static/images/carousel3.jpg" alt="MY ALT TEXT"/>
+        <img src="static/images/cathsim.png" alt="MY ALT TEXT"/>
         <h2 class="subtitle has-text-centered">
          Third image description.
        </h2>
      </div>
      <div class="item">
       <!-- Your image here -->
-      <img src="static/images/carousel4.jpg" alt="MY ALT TEXT"/>
+      <img src="static/images/cathsim.png" alt="MY ALT TEXT"/>
       <h2 class="subtitle has-text-centered">
         Fourth image description.
       </h2>
@@ -201,57 +211,57 @@
 
 
 <!-- Youtube video -->
-<section class="hero is-small is-light">
-  <div class="hero-body">
-    <div class="container">
+<!-- <section class="hero is-small is-light"> -->
+<!--   <div class="hero-body"> -->
+<!--     <div class="container"> -->
       <!-- Paper video. -->
-      <h2 class="title is-3">Video Presentation</h2>
-      <div class="columns is-centered has-text-centered">
-        <div class="column is-four-fifths">
-          
-          <div class="publication-video">
+<!--       <h2 class="title is-3">Video Presentation</h2> -->
+<!--       <div class="columns is-centered has-text-centered"> -->
+<!--         <div class="column is-four-fifths"> -->
+<!--            -->
+<!--           <div class="publication-video"> -->
             <!-- Youtube embed code here -->
-            <iframe src="https://www.youtube.com/embed/JkaxUblCGz0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+<!--             <iframe src="https://www.youtube.com/embed/JkaxUblCGz0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe> -->
+<!--           </div> -->
+<!--         </div> -->
+<!--       </div> -->
+<!--     </div> -->
+<!--   </div> -->
+<!-- </section> -->
 <!-- End youtube video -->
 
 
 <!-- Video carousel -->
-<section class="hero is-small">
-  <div class="hero-body">
-    <div class="container">
-      <h2 class="title is-3">Another Carousel</h2>
-      <div id="results-carousel" class="carousel results-carousel">
-        <div class="item item-video1">
-          <video poster="" id="video1" autoplay controls muted loop height="100%">
+<!-- <section class="hero is-small"> -->
+<!--   <div class="hero-body"> -->
+<!--     <div class="container"> -->
+<!--       <h2 class="title is-3">Another Carousel</h2> -->
+<!--       <div id="results-carousel" class="carousel results-carousel"> -->
+<!--         <div class="item item-video1"> -->
+<!--           <video poster="" id="video1" autoplay controls muted loop height="100%"> -->
             <!-- Your video file here -->
-            <source src="static/videos/carousel1.mp4"
-            type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-video2">
-          <video poster="" id="video2" autoplay controls muted loop height="100%">
+<!--             <source src="static/videos/carousel1.mp4" -->
+<!--             type="video/mp4"> -->
+<!--           </video> -->
+<!--         </div> -->
+<!--         <div class="item item-video2"> -->
+<!--           <video poster="" id="video2" autoplay controls muted loop height="100%"> -->
             <!-- Your video file here -->
-            <source src="static/videos/carousel2.mp4"
-            type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-video3">
-          <video poster="" id="video3" autoplay controls muted loop height="100%">\
+<!--             <source src="static/videos/carousel2.mp4" -->
+<!--             type="video/mp4"> -->
+<!--           </video> -->
+<!--         </div> -->
+<!--         <div class="item item-video3"> -->
+<!--           <video poster="" id="video3" autoplay controls muted loop height="100%">\ -->
             <!-- Your video file here -->
-            <source src="static/videos/carousel3.mp4"
-            type="video/mp4">
-          </video>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+<!--             <source src="static/videos/carousel3.mp4" -->
+<!--             type="video/mp4"> -->
+<!--           </video> -->
+<!--         </div> -->
+<!--       </div> -->
+<!--     </div> -->
+<!--   </div> -->
+<!-- </section> -->
 <!-- End video carousel -->
 
 
@@ -260,17 +270,17 @@
 
 
 <!-- Paper poster -->
-<section class="hero is-small is-light">
-  <div class="hero-body">
-    <div class="container">
-      <h2 class="title">Poster</h2>
-
-      <iframe  src="static/pdfs/sample.pdf" width="100%" height="550">
-          </iframe>
-        
-      </div>
-    </div>
-  </section>
+<!-- <section class="hero is-small is-light"> -->
+<!--   <div class="hero-body"> -->
+<!--     <div class="container"> -->
+<!--       <h2 class="title">Poster</h2> -->
+<!---->
+<!--       <iframe  src="static/pdfs/jianu2023cathsim.pdf" width="100%" height="550"> -->
+<!--           </iframe> -->
+<!--          -->
+<!--       </div> -->
+<!--     </div> -->
+<!--   </section> -->
 <!--End paper poster -->
 
 
@@ -278,7 +288,14 @@
   <section class="section" id="BibTeX">
     <div class="container is-max-desktop content">
       <h2 class="title">BibTeX</h2>
-      <pre><code>BibTex Code Here</code></pre>
+      <pre><code>@misc{jianu2023cathsim,
+      title={CathSim: An Open-source Simulator for Autonomous Cannulation}, 
+      author={Tudor Jianu and Baoru Huang and Mohamed E. M. K. Abdelaziz and Minh Nhat Vu and Sebastiano Fichera and Chun-Yi Lee and Pierre Berthet-Rayne and Ferdinando Rodriguez y Baena and Anh Nguyen},
+      year={2023},
+      eprint={2208.01455},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO}
+}</code></pre>
     </div>
 </section>
 <!--End BibTex citation -->
@@ -289,7 +306,6 @@
     <div class="columns is-centered">
       <div class="column is-8">
         <div class="content">
-
           <p>
             This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a>.
             You are free to borrow the of this website, we just ask that you link back to this page in the footer. <br> This website is licensed under a <a rel="license"  href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
