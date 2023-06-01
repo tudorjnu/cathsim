@@ -40,6 +40,9 @@ class Phantom(PhantomCreator):
             group=0,
             condim=phantom_config['condim'],
         )
+        self._mjcf_root.default.site.set_attributes(
+            rgba=[0, 0, 0, 0],
+        )
 
         self.set_scale(scale=self.scale)
         self.set_rgba(rgba=self.rgba)
