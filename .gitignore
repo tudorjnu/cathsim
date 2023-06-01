@@ -4,8 +4,8 @@ rl/imitation/
 rl/expert/
 rl/results/
 rl/feature_extractors/
-scripts/
-# scratch/
+# scripts/
+scratch/
 tests/
 .sync*
 

@@ -2,7 +2,7 @@
 
 # use a loop to train all the models
 echo "-----Training-----"
-configs=(full internal internal_pixels pixels pixels_mask)
+configs=(full internal internal_pixels pixels pixels_mask full_w_her full_w_her_w_sampling)
 targets=(bca)
 phantom=phantom4
 n_runs=2
