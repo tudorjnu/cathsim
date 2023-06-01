@@ -1,7 +1,11 @@
 # Folders
-rl/
+rl/results/
+rl/imitation/
+rl/expert/
+rl/results/
+rl/feature_extractors/
 scripts/
-scratch/
+# scratch/
 tests/
 .sync*
 
