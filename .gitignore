@@ -2,7 +2,7 @@
 rl/
 scripts/
 scratch/
-test/
+tests/
 .sync*
 
 
