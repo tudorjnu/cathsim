@@ -19,14 +19,15 @@ def distance(a: np.ndarray, b: np.ndarray) -> np.ndarray:
 
 
 def make_dm_env(
+        phantom: str = 'phantom3',
+        target: str = 'bca',
+        use_pixels: bool = False,
         dense_reward: bool = True,
         success_reward: float = 10.0,
         delta: float = 0.004,
-        use_pixels: bool = False,
         use_segment: bool = False,
-        image_size: int = 64,
-        phantom: str = 'phantom3',
-        target: str = 'bca',
+        image_size: int = 80,
+        **kwargs,
 ) -> composer.Environment:
     """
     Makes a dm_control environment.
@@ -57,6 +58,7 @@ def make_dm_env(
         use_segment=use_segment,
         image_size=image_size,
         target=target,
+        **kwargs,
     )
     env = composer.Environment(
         task=task,
@@ -69,7 +71,6 @@ def make_dm_env(
 
 def make_env(
         config: dict = dict(
-            env_kwargs={},
             task_kwargs={},
             wrapper_kwargs={},
             render_kwargs={},
@@ -95,9 +96,17 @@ def make_env(
     normalize_obs = wrapper_kwargs.get('normalize_obs', False)
     frame_stack = wrapper_kwargs.get('frame_stack', 1)
     use_pixels = task_kwargs.get('use_pixels', False)
+    goal_env = wrapper_kwargs.get('goal_env', False)
+
+    if goal_env:
+        filter_keys = filter_keys + ['achieved_goal', 'desired_goal']
 
     env = make_dm_env(**task_kwargs)
     env = DMEnvToGymWrapper(env=env, env_kwargs=env_kwargs)
+
+    if goal_env:
+        from cathsim.wrappers import GoalEnvWrapper
+        env = GoalEnvWrapper(env=env)
 
     env = wrappers.TimeLimit(env, max_episode_steps=max_episode_steps)
 
@@ -155,8 +164,8 @@ class Application(Application):
     def perform_action(self):
         time_step = self._runtime._time_step
         physics = self._runtime._env.physics
-        print(f'step {self._step:03}')
-        print(self._runtime._env.task.get_contact_forces(physics).round(2))
+        force = self._runtime._env.task.get_force(physics).round(2)
+        print(f'step {self._step:03} | force {force}')
         if not time_step.last():
             self._advance_simulation()
             self._step += 1

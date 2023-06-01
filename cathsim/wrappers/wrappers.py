@@ -114,16 +114,15 @@ class DMEnvToGymWrapper(gym.Env):
         return self._env._physics
 
     def compute_reward(self, achieved_goal, desired_goal, info):
-        return self._env._task.compute_reward(achieved_goal, desired_goal, info)
+        return self._env._task.compute_reward(achieved_goal, desired_goal)
 
     @property
-    def goal(self):
+    def target(self):
         """The goal property."""
         return self._env._task.target_pos
 
-    @goal.setter
-    def goal(self, goal):
-        self._env._task.target_pos = goal
+    def set_target(self, goal):
+        self._env._task.set_target(goal)
 
 
 class GoalEnvWrapper(gym.ObservationWrapper):
@@ -135,8 +134,8 @@ class GoalEnvWrapper(gym.ObservationWrapper):
 
         self.observation_space = gym.spaces.Dict(
             **self._env.observation_space.spaces,
-            desired_goal=spaces.Box(low=-np.inf, high=np.inf, shape=self._env.goal.shape, dtype=np.float32),
-            achieved_goal=spaces.Box(low=-np.inf, high=np.inf, shape=self._env.goal.shape, dtype=np.float32),
+            desired_goal=spaces.Box(low=-np.inf, high=np.inf, shape=self._env.target.shape, dtype=np.float32),
+            achieved_goal=spaces.Box(low=-np.inf, high=np.inf, shape=self._env.target.shape, dtype=np.float32),
         )
 
         print('\nGoalEnvWrapper Observation Space:')
@@ -152,11 +151,10 @@ class GoalEnvWrapper(gym.ObservationWrapper):
     @property
     def goal(self):
         """The goal property."""
-        return self._env.goal
+        return self._env.target
 
-    @goal.setter
-    def goal(self, value):
-        self._env.goal = value
+    def set_goal(self, goal):
+        self._env.set_target(goal)
 
 
 class Dict2Array(gym.ObservationWrapper):
@@ -231,8 +229,8 @@ if __name__ == "__main__":
     config = get_config('full')
     env = make_dm_env(**config['task_kwargs'])
     env = DMEnvToGymWrapper(env)
-    env = MultiInputImageWrapper(env, grayscale=True)
     env = GoalEnvWrapper(env)
+    env = MultiInputImageWrapper(env, grayscale=True)
     # check_env(env, warn=True)
 
     obs = env.reset()
