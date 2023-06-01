@@ -32,9 +32,48 @@ CYLINDER_HEIGHT = SPHERE_RADIUS * guidewire_config['sphere_to_cylinder_ratio']
 OFFSET = SPHERE_RADIUS + CYLINDER_HEIGHT * 2
 
 TARGET_POS = np.array([-0.043272, 0.136586, 0.034102])
-TARGET_POS = np.array([-0.02809, 0.13286, 0.033681])
 
 random_state = np.random.RandomState(42)
+
+
+def make_scene(geom_groups: list):
+    scene_option = wrapper.MjvOption()
+    scene_option.geomgroup = np.zeros_like(
+        scene_option.geomgroup)
+    for geom_group in geom_groups:
+        scene_option.geomgroup[geom_group] = True
+    return scene_option
+
+
+def filter_mask(segment_image: np.ndarray):
+    geom_ids = segment_image[:, :, 0]
+    geom_ids = geom_ids.astype(np.float64) + 1
+    geom_ids = geom_ids / geom_ids.max()
+    segment_image = 255 * geom_ids
+    return segment_image
+
+
+def generate_random_point(mask: np.array, x_min: int, x_max: int,
+                          y_min: int, y_max: int) -> tuple:
+    """ Generate a random point within the given rectangle within the mask."""
+
+    # get all valid coordinates within the specified rectangle
+    coords = np.argwhere(mask[y_min:y_max, x_min:x_max] == 1)
+
+    # return None if there are no valid pixels
+    if len(coords) == 0:
+        print("No valid pixels found in the given range.")
+        return None
+
+    # randomly select one of the coordinates
+    random_index = np.random.randint(len(coords))
+    y_coord, x_coord = coords[random_index]
+
+    # adjust for the offset of the rectangle
+    x_coord += x_min
+    y_coord += y_min
+
+    return (x_coord, y_coord)
 
 
 class Scene(composer.Arena):
@@ -65,11 +104,6 @@ class Scene(composer.Arena):
             rgb2=[1, 1, 1], width=256, height=256)
 
         self.add_light(pos=[0, 0, 10], dir=[20, 20, -20], castshadow=False)
-        site = self.add_site('target', TARGET_POS)
-
-        if render_site:
-            site.rgba = self._mjcf_root.default.site.rgba
-            site.rgba[-1] = 1
 
     def regenerate(self, random_state):
         pass
@@ -287,7 +321,10 @@ class Navigate(composer.Task):
                  success_reward: float = 10.0,
                  use_pixels: bool = False,
                  use_segment: bool = False,
-                 image_size: int = 480,
+                 use_phantom_segment: bool = False,
+                 image_size: int = 80,
+                 sample_target: bool = False,
+                 visualize_sites: bool = False,
                  target=None,
                  ):
 
@@ -296,7 +333,10 @@ class Navigate(composer.Task):
         self.success_reward = success_reward
         self.use_pixels = use_pixels
         self.use_segment = use_segment
+        self.use_phantom_segment = use_phantom_segment
         self.image_size = image_size
+        self.sample_target = sample_target
+        self.visualize_sites = visualize_sites
 
         self._arena = Scene("arena")
         if phantom is not None:
@@ -331,11 +371,7 @@ class Navigate(composer.Task):
             )
 
         if self.use_segment:
-            guidewire_option = wrapper.MjvOption()
-            guidewire_option.geomgroup = np.zeros_like(
-                guidewire_option.geomgroup)
-            guidewire_option.geomgroup[1] = 1  # show the guidewire
-            guidewire_option.geomgroup[2] = 1  # show the tip
+            guidewire_option = make_scene([1, 2])
 
             self._task_observables['guidewire'] = CameraObservable(
                 camera_name='top_camera',
@@ -344,19 +380,16 @@ class Navigate(composer.Task):
                 scene_option=guidewire_option,
                 segmentation=True
             )
-            #
-            # guidewire_option = wrapper.MjvOption()
-            # guidewire_option.geomgroup = np.zeros_like(
-            #     guidewire_option.geomgroup)
-            # guidewire_option.geomgroup[0] = 1  # show the phantom
-            #
-            # self._task_observables['phantom'] = CameraObservable(
-            #     camera_name='top_camera',
-            #     height=image_size,
-            #     width=image_size,
-            #     scene_option=guidewire_option,
-            #     segmentation=True
-            # )
+
+        if self.use_phantom_segment:
+            phantom_option = make_scene([0])
+            self._task_observables['phantom'] = CameraObservable(
+                camera_name='top_camera',
+                height=image_size,
+                width=image_size,
+                scene_option=phantom_option,
+                segmentation=True
+            )
 
         self._task_observables['joint_pos'] = observable.Generic(
             self.get_joint_positions)
@@ -379,6 +412,12 @@ class Navigate(composer.Task):
 
         self.set_target(target)
         self.camera_matrix = None
+
+        if self.visualize_sites:
+            sites = self._arena.mjcf_model.find_all('site')
+            for site in sites:
+                print(site.name)
+                site.rgba = [1, 0, 0, 1]
 
     @ property
     def root_entity(self):
@@ -413,6 +452,8 @@ class Navigate(composer.Task):
                                             random_state=random_state)
         self._guidewire.set_pose(physics, position=guidewire_pose)
         self.success = False
+        if self.sample_target:
+            self.set_target(self.get_random_target())
 
     def get_reward(self, physics):
         self.head_pos = self.get_head_pos(physics)
@@ -474,22 +515,54 @@ class Navigate(composer.Task):
         camera = Camera(physics, height=image_size, width=image_size, camera_id=camera_id)
         return camera.matrix
 
+    def get_phantom_mask(self, physics, image_size: int = None, camera_id=0):
+        scene_option = make_scene([0])
+        if image_size is None:
+            image_size = self.image_size
+        image = physics.render(height=image_size,
+                               width=image_size,
+                               camera_id=camera_id,
+                               scene_option=scene_option)
+        mask = filter_mask(image)
+        return mask
+
+    def get_guidewire_mask(self, physics, image_size: int = None, camera_id=0):
+        scene_option = make_scene([1, 2])
+        if image_size is None:
+            image_size = self.image_size
+        image = physics.render(height=image_size,
+                               width=image_size,
+                               camera_id=camera_id,
+                               scene_option=scene_option)
+        mask = filter_mask(image)
+        return mask
+
+    def get_random_target(self):
+        sites = self._phantom.sites
+        site = np.random.choice(list(sites.keys()))
+        target = sites[site]
+        return target
+
+    # def sample_target(self):
+    #     goal = generate_random_point(self.phantom_mask, 10, 70, 30, 60)
+    #     return goal
+
 
 def run_env(args=None):
     from argparse import ArgumentParser
     from dm_control.viewer import launch
 
     parser = ArgumentParser()
-    parser.add_argument('--n_bodies', type=int, default=80)
-    parser.add_argument('--tip_n_bodies', type=int, default=4)
     parser.add_argument('--interact', type=bool, default=True)
-    target = 'bca'
+    parser.add_argument('--phantom', default='phantom3', type=str)
+    parser.add_argument('--target', default='bca', type=str)
 
     parsed_args = parser.parse_args(args)
 
-    phantom = Phantom()
-    tip = Tip(n_bodies=parsed_args.tip_n_bodies)
-    guidewire = Guidewire(n_bodies=parsed_args.n_bodies)
+    phantom = Phantom(parsed_args.phantom + '.xml')
+
+    tip = Tip()
+    guidewire = Guidewire()
 
     task = Navigate(
         phantom=phantom,
@@ -497,7 +570,8 @@ def run_env(args=None):
         tip=tip,
         use_pixels=True,
         use_segment=True,
-        target=target,
+        target=parsed_args.target,
+        visualize_sites=True,
     )
 
     env = composer.Environment(
@@ -511,8 +585,6 @@ def run_env(args=None):
         del time_step  # Unused
         return [0, 0]
 
-    launch(env, policy=random_policy)
-
     # Launch the viewer application.
     if parsed_args.interact:
         from cathsim.cathsim.env_utils import launch
@@ -522,4 +594,45 @@ def run_env(args=None):
 
 
 if __name__ == "__main__":
-    run_env()
+    import matplotlib.pyplot as plt
+    phantom_name = 'phantom4'
+    phantom = Phantom(phantom_name + '.xml')
+    tip = Tip()
+    guidewire = Guidewire()
+
+    task = Navigate(
+        phantom=phantom,
+        guidewire=guidewire,
+        tip=tip,
+        use_pixels=True,
+        use_segment=True,
+        target='bca',
+        sample_target=True,
+        image_size=480,
+        visualize_sites=True,
+    )
+
+    env = composer.Environment(
+        task=task,
+        time_limit=2000,
+        random_state=np.random.RandomState(42),
+        strip_singleton_obs_buffer_dim=True,
+    )
+
+    def random_policy(time_step):
+        del time_step  # Unused
+        return [0, 0]
+
+    # loop 2 episodes of 2 steps
+    for episode in range(2):
+        time_step = env.reset()
+        print(env._task.get_camera_matrix(env.physics), 480)
+        for step in range(2):
+            action = random_policy(time_step)
+            img = env.physics.render(height=480, width=480, camera_id=0)
+            plt.imshow(img)
+            plt.imsave(f'../figures/{phantom_name}.png', img)
+            exit()
+            plt.show()
+            time_step = env.step(action)
+            print(env._task._target_pos)
