@@ -1,1 +1,1 @@
-from .wrappers import DMEnvToGymWrapper, Dict2Array, MultiInputImageWrapper
+from .wrappers import DMEnvToGymWrapper, Dict2Array, MultiInputImageWrapper, GoalEnvWrapper
