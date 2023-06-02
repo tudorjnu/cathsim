@@ -367,7 +367,7 @@ def plot_error_line_graph(mean, stdev, label, color='C0'):
 if __name__ == '__main__':
 
     # evaluate_model(EXPERIMENT_PATH / 'low_tort' / 'bca' / 'full', n_episodes=10)
-    # evaluate_models()
+    evaluate_models()
     # lcca_evaluation.mkdir(exist_ok=True)
     collate_results()
     dataframe = aggregate_results()
@@ -387,13 +387,13 @@ if __name__ == '__main__':
     dataframe = dataframe.applymap(lambda x: f'{x:.2f}' if isinstance(x, float) else x)
 
     new_columns = ['Phantom', 'Target', 'Algorithm', 'Force (N)', 'Path Length (mm)',
-                   'Episode Length (s)', 'Safety \%', 'Success \%', 'SPL \%',]
+                   'Episode Length (s)', 'Safety %', 'Success %', 'SPL %',]
     dataframe['Force (N)'] = '$' + dataframe['Force'].astype(str) + ' \\pm ' + dataframe['Force Std'].astype(str) + '$'
     dataframe['Path Length (mm)'] = '$' + dataframe['Path Length'].astype(str) + ' \\pm ' + dataframe['Path Length Std'].astype(str) + '$'
     dataframe['Episode Length (s)'] = '$' + dataframe['Episode Length'].astype(str) + ' \\pm ' + dataframe['Episode Length Std'].astype(str) + '$'
-    dataframe['Safety \%'] = '$' + dataframe['Safety'].astype(str) + ' \\pm ' + dataframe['Safety Std'].astype(str) + '$'
-    dataframe['Success \%'] = '$' + dataframe['Success'].astype(str) + ' \\pm ' + dataframe['Success Std'].astype(str) + '$'
-    dataframe['SPL \%'] = '$' + dataframe['Spl'].astype(str) + '$'
+    dataframe['Safety %'] = '$' + dataframe['Safety'].astype(str) + ' \\pm ' + dataframe['Safety Std'].astype(str) + '$'
+    dataframe['Success %'] = '$' + dataframe['Success'].astype(str) + ' \\pm ' + dataframe['Success Std'].astype(str) + '$'
+    dataframe['SPL %'] = '$' + dataframe['Spl'].astype(str) + '$'
     # format the elements of the columns
     # drop the row where the phantom is low_tort
     dataframe = dataframe[dataframe['Phantom'] != 'low_tort']

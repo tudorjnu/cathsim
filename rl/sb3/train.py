@@ -3,7 +3,7 @@ from pathlib import Path
 import argparse
 
 argparser = argparse.ArgumentParser()
-argparser.add_argument('--config', type=str)
+argparser.add_argument('--config', type=str, default='test')
 argparser.add_argument('--experiment-path', type=str)
 argparser.add_argument('--target', type=str, default='bca')
 argparser.add_argument('--phantom', type=str, default='phantom3')

@@ -201,7 +201,7 @@ def cmd_visualize_agent(args=None):
     if args.save_video:
         import moviepy.editor as mpy
 
-    path = Path(f'{args.phantom}/{args.target}/{algo}')
+    path = Path(f'{args.phantom}/{args.target}/{args.config}')
     config = get_config(args.config)
     model_path, log_path, eval_path = make_experiment(path)
 
@@ -216,6 +216,8 @@ def cmd_visualize_agent(args=None):
 
     # if config == 'pixels':
     #     config['wrapper_kwargs']['get_images'] = args.get_images
+    config['task_kwargs']['target'] = args.target
+    config['task_kwargs']['phantom'] = args.phantom
 
     if algo == 'bc':
         config['wrapper_kwargs']['channel_first'] = True
