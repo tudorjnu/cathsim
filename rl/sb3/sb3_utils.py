@@ -185,15 +185,16 @@ def cmd_visualize_agent(args=None):
     import cv2
     from cathsim.cathsim import make_env
     import argparse as ap
-    from dm_control.mujoco import wrapper
+    from scratch.bc.custom_networks import CustomPolicy
     parser = ap.ArgumentParser()
-    parser.add_argument('--config', type=str)
+    parser.add_argument('--config', type=str, default='full')
     parser.add_argument('--phantom', type=str, default='phantom3')
     parser.add_argument('--target', type=str, default='bca')
     parser.add_argument('--seed', type=int, default=None)
     parser.add_argument('--save-video', type=bool, default=False)
     parser.add_argument('--get_images', type=bool, default=False)
     parser.add_argument('--algo', type=str, default='sac')
+    parser.add_argument('--visualize-sites', type=bool, default=False)
     args = parser.parse_args()
 
     algo = args.algo
@@ -218,6 +219,7 @@ def cmd_visualize_agent(args=None):
     #     config['wrapper_kwargs']['get_images'] = args.get_images
     config['task_kwargs']['target'] = args.target
     config['task_kwargs']['phantom'] = args.phantom
+    config['task_kwargs']['visualize_sites'] = args.visualize_sites
 
     if algo == 'bc':
         config['wrapper_kwargs']['channel_first'] = True
@@ -237,7 +239,7 @@ def cmd_visualize_agent(args=None):
         frames = []
         segment_frames = []
         rewards = []
-        scene_option = make_scene(geom_groups=[1, 2])
+        # scene_option = make_scene(geom_groups=[1, 2])
         while not done:
             action, _states = model.predict(obs)
             obs, reward, done, info = env.step(action)
@@ -245,15 +247,15 @@ def cmd_visualize_agent(args=None):
             rewards.append(reward)
 
             image = env.render('rgb_array', image_size=480)
-            segment_image = env.env.env.env.physics.render(480, 480, camera_id=0, scene_option=scene_option,
-                                                           segmentation=True)
-            segment_image = filter_mask(segment_image)
-            segment_frames.append(segment_image)
-            print(segment_image.shape)
+            # segment_image = env.env.env.env.physics.render(480, 480, camera_id=0, scene_option=scene_option,
+            #                                                segmentation=True)
+            # segment_image = filter_mask(segment_image)
+            # segment_frames.append(segment_image)
+            # print(segment_image.shape)
             frames.append(image)
 
             image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-            cv2.imshow('segment', segment_image)
+            # cv2.imshow('segment', segment_image)
             cv2.imshow('image', image)
             cv2.waitKey(1)
 
