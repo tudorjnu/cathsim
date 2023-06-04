@@ -1765,8 +1765,8 @@
     <mesh name="hull_1823" file="phantom3/hull_1823.stl" />
   </asset>
   <worldbody>
-    <site name="bca" pos="-0.043272 0.136586 0.034102"/>
-    <site name="lcca" pos="-0.028089890256524086 0.1328611671924591 0.0336812399327755"/>
+    <site name="bca" pos="-0.043272 0.136586 0.034102" />
+    <site name="lcca" pos="-0.028332816436886787 0.13150131702423096 0.036180831491947174" />
     <body name="phantom">
       <geom name="visual" type="mesh" mesh="visual" rgba="0.8 0.8 0.8 1" contype="0"
         conaffinity="0" />

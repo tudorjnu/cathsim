@@ -95,7 +95,7 @@ class Scene(composer.Arena):
                                                  [-0.03, 0.125, 0.065], [0, 0, 0])
         self._mjcf_root.default.site.set_attributes(
             type='sphere',
-            size=[0.004],
+            size=[0.002],
             rgba=[0.8, 0.8, 0.8, 0],
         )
 
@@ -414,9 +414,8 @@ class Navigate(composer.Task):
         self.camera_matrix = None
 
         if self.visualize_sites:
-            sites = self._arena.mjcf_model.find_all('site')
+            sites = self._phantom._mjcf_root.find_all('site')
             for site in sites:
-                print(site.name)
                 site.rgba = [1, 0, 0, 1]
 
     @ property
