@@ -43,6 +43,11 @@ class Phantom(PhantomCreator):
         self._mjcf_root.default.site.set_attributes(
             rgba=[0, 0, 0, 0],
         )
+        self._mjcf_root.default.site.set_attributes(
+            type='sphere',
+            size=[0.002],
+            rgba=[0.8, 0.8, 0.8, 0],
+        )
 
         self.set_scale(scale=self.scale)
         self.set_rgba(rgba=self.rgba)
