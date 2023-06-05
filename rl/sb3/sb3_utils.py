@@ -58,6 +58,18 @@ EVALUATION_PATH = RESULTS_PATH / 'evaluation'
 
 
 def make_experiment(experiment_path: Path = None) -> tuple:
+    """Create experiment directory structure.
+
+    experiment_path: Path to experiment directory
+
+    returns:
+        model_path: Path to save models
+        log_path: Path to save logs
+        eval_path: Path to save evaluation results
+
+    example:
+        model_path, log_path, eval_path = make_experiment('test')
+    """
     assert experiment_path, 'experiment_path must be specified'
     experiment_path = EXPERIMENT_PATH / experiment_path
     model_path = experiment_path / 'models'
