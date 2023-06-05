@@ -56,6 +56,7 @@ class DMEnvToGymWrapper(gym.Env):
             self._env.observation_spec(), )
 
         self.viewer = None
+        self.include_contact_forces = False
         # self.goal = np.array([0.0, 0.0, 0.0])
 
     def seed(self, seed):
@@ -69,8 +70,9 @@ class DMEnvToGymWrapper(gym.Env):
         info = dict(
             head_pos=self.head_pos.copy(),
             forces=self.force.copy(),
-            contact_forces=self.contact_forces.copy(),
         )
+        if self.include_contact_forces:
+            info['contact_forces'] = self.contact_forces.copy()
         return observation, reward, done, info
 
     def reset(self):
