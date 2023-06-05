@@ -42,7 +42,7 @@ def point2pixel(point, camera_matrix: np.ndarray = None):
     x, y, z = point
     xs, ys, s = camera_matrix.dot(np.array([x, y, z, 1.0]))
 
-    return np.array([round(xs / s), round(ys / s)], np.int8)
+    return np.array([round(xs / s), round(ys / s)]).asttype(np.int8)
 
 
 class CameraObservable(MujocoCamera):
