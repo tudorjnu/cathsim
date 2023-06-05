@@ -1,4 +1,5 @@
 from pathlib import Path
+import warnings
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
@@ -12,16 +13,58 @@ from rl.sb3.sb3_utils import EXPERIMENT_PATH, EVALUATION_PATH
 
 from stable_baselines3.common.base_class import BaseAlgorithm
 
+from typing import Union, Callable, Optional, Any, Dict, List, Tuple
+
 
 def calculate_total_distance(positions):
     return np.sum(distance(positions[1:], positions[:-1]))
 
 
-def analyze_model(result_path: Path, optimal_path_length: float = 15.73) -> OrderedDict:
-    data = np.load(result_path, allow_pickle=True)
-    episodes = data['results']
-    if len(episodes) == 0:
-        return None
+def load_human_trajectories(path: Path, flatten=False, mapping: dict = None):
+    trajectories = {}
+    for episode in path.iterdir():
+        trajectory_path = episode / 'trajectory.npz'
+        if not trajectory_path.exists():
+            continue
+        episode_data = np.load(episode / 'trajectory.npz', allow_pickle=True)
+        episode_data = dict(episode_data)
+        if flatten:
+            for key, value in episode_data.items():
+                if mapping is not None:
+                    if key in mapping:
+                        key = mapping[key]
+                if key == 'time':
+                    continue
+                trajectories.setdefault(key, []).extend(value)
+        else:
+            if mapping is not None:
+                for key, value in mapping.items():
+                    episode_data[mapping[key]] = episode_data.pop(key)
+            trajectories[episode.name] = episode_data
+    if flatten:
+        for key, value in trajectories.items():
+            trajectories[key] = np.array(value)
+
+    return trajectories
+
+
+def human_data_loader(path: Path) -> list:
+    trajectories = load_human_trajectories(path, flatten=False, mapping={'force': 'forces'})
+    return list(trajectories.values())
+
+
+def analyze_model(result_path: Path, optimal_path_length: float = 15.73,
+                  human: bool = False, human_data_fn: callable = None) -> OrderedDict:
+    if not human:
+        data = np.load(result_path, allow_pickle=True)
+        if 'results' not in data:
+            episodes = data
+        else:
+            episodes = data['results']
+        if len(episodes) == 0:
+            return None
+    else:
+        episodes = human_data_fn(result_path)
 
     algo_results = []
     for episode in episodes:
@@ -62,11 +105,12 @@ def analyze_model(result_path: Path, optimal_path_length: float = 15.73) -> Orde
     return summary_results
 
 
-def aggregate_results(eval_path: Path = None, output_path: Path = None) -> pd.DataFrame:
+def aggregate_results(eval_path: Path = None, output_path: Path = None,
+                      verbose: bool = False) -> pd.DataFrame:
     eval_path = eval_path or EVALUATION_PATH
-    output_path = output_path or EVALUATION_PATH / 'results.csv'
 
-    print(f'Analyzing {"experiment".ljust(30)} {"phantom".ljust(30)} {"target".ljust(30)}')
+    if verbose:
+        print(f'Analyzing {"experiment".ljust(30)} {"phantom".ljust(30)} {"target".ljust(30)}')
 
     dataframe = pd.DataFrame()
 
@@ -151,6 +195,31 @@ def plot_path(filename):
     plt.show()
 
 
+def collate_human_trajectories(path: Path, mapping: dict = None, save_path: Path = None):
+    """ Collate the human trajectories into a single numpy array.
+
+    path: (Path) The path to the human trajectories.
+    mapping: (dict) A mapping from the keys in the trajectory to the keys in the collated array.
+    """
+    mapping = mapping or {'force': 'forces'}
+    trajectories = {}
+    for i, episode in enumerate(path.iterdir()):
+        trajectory_path = episode / 'trajectory.npz'
+        if not trajectory_path.exists():
+            continue
+        episode_data = np.load(episode / 'trajectory.npz', allow_pickle=True)
+        episode_data = dict(episode_data)
+        if mapping is not None:
+            for key, value in mapping.items():
+                episode_data[mapping[key]] = episode_data.pop(key)
+        trajectories[str(i)] = episode_data
+    trajectories = list(trajectories.values())
+    if save_path is not None:
+        save_path = EVALUATION_PATH / save_path
+        np.savez(save_path, results=trajectories)
+    return trajectories
+
+
 def collate_experiment_results(experiment_path: Path) -> list:
     """
     Collate the results of all the runs of an experiment into a single numpy array.
@@ -172,7 +241,8 @@ def collate_experiment_results(experiment_path: Path) -> list:
     return collated_results
 
 
-def collate_results(experiment_path: Path = None, evaluation_path: Path = None) -> None:
+def collate_results(experiment_path: Path = None, evaluation_path: Path = None,
+                    verbose: bool = False) -> None:
     """
     Check the results of all the seeds of all the experiments and collate them into a single numpy array.
 
@@ -194,9 +264,13 @@ def collate_results(experiment_path: Path = None, evaluation_path: Path = None) 
                     if experiment.is_dir() is False:
                         continue
                     else:
-                        print(f'Collating results for {phantom.name}/{target.name}/{experiment.name}')
+                        if verbose:
+                            print(f'Collating results for {phantom.name}/{target.name}/{experiment.name}')
                         path = Path(f'{phantom.name}/{target.name}')
-                        experiment_results = collate_experiment_results(path / experiment.name)
+                        if experiment.name == 'human':
+                            experiment_results = collate_human_trajectories(path / experiment.name)
+                        else:
+                            experiment_results = collate_experiment_results(path / experiment.name)
                         (EVALUATION_PATH / path).mkdir(parents=True, exist_ok=True)
                         np.savez_compressed(EVALUATION_PATH / path / f'{experiment.name}.npz', results=experiment_results)
 
@@ -262,8 +336,7 @@ def evaluate_models(experiments_path: Path = None, n_episodes=10,
             algorithms = [algorithm for algorithm in target.iterdir() if
                           (algorithm_name is None or algorithm.name == algorithm_name)]
             for algorithm in algorithms:
-                if not algorithm.stem == 'bc':
-                    evaluate_model(algorithm, n_episodes)
+                evaluate_model(algorithm, n_episodes)
 
 
 def evaluate_model(algorithm_path, n_episodes=10):
@@ -281,18 +354,37 @@ def evaluate_model(algorithm_path, n_episodes=10):
 
     for model_filename in model_path.iterdir():
         model_name = model_filename.stem
-        print(algorithm_path)
         if (eval_path / (model_name + '.npz')).exists():
             continue
         print(f'Evaluating {model_name} in {algorithm_path} for {n_episodes} episodes.')
-        model = SAC.load(model_filename)
         config = get_config(algorithm_path.stem)
+        config['task_kwargs']['phantom'] = algorithm_path.parent.parent.stem
+        config['task_kwargs']['target'] = algorithm_path.parent.stem
+        if algorithm_path.stem == 'bc':
+            config['wrapper_kwargs']['channel_first'] = True
         env = make_env(config)
+        if algorithm_path.stem == 'bc':
+            from scratch.bc.custom_networks import CnnPolicy
+            from cathsim.wrappers import Dict2Array
+            import torch as th
+            env = Dict2Array(env)
+
+            model = CnnPolicy(observation_space=env.observation_space,
+                              action_space=env.action_space,
+                              lr_schedule=lambda _: th.finfo(th.float32).max,
+                              ).load(model_path / 'bc')
+        else:
+            model = SAC.load(model_filename)
         evaluation_data = evaluate_policy(model, env, n_episodes=n_episodes)
         np.savez_compressed(eval_path / f'{model_name}.npz', **evaluation_data)
 
 
 def parse_tensorboard_log(path: Path):
+    """ Parse a tensorboard log.
+
+    :param path Path: The path to the tensorboard log.
+    :return pd.DataFrame: The parsed tensorboard log.
+    """
     from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
     import pandas as pd
 
@@ -308,37 +400,43 @@ def parse_tensorboard_log(path: Path):
     return df
 
 
-def get_tensorboard_logs(path: Path):
-    for experiment in EXPERIMENT_PATH.iterdir():
-        if not experiment.is_dir():
-            continue
-        tensorboard_path = experiment / 'logs'
-        if not tensorboard_path.exists():
-            continue
-        for model in tensorboard_path.iterdir():
-            if not model.is_dir():
-                continue
-            for log in model.iterdir():
-                if log.suffix != '.tfevents':
-                    continue
-                yield parse_tensorboard_log(log)
+def get_experiment_tensorboard_logs(path: Path, n_interpolations: int = None) -> Tuple[List[pd.DataFrame], Tuple]:
+    """ Get the tensorboard logs for an experiment.
 
+    :param path Path: The path to the experiment.
+    :param n_interpolations int: The number of interpolations to use.
+    :return List[pd.DataFrame]: A list of dataframes containing the tensorboard logs.
+    """
 
-def get_experiment_tensorboard_logs(experiment_name: str):
-    _, experiment_log_path, _ = make_experiment(experiment_name)
+    _, log_path, _ = make_experiment(path)
     logs = []
-    for model in experiment_log_path.iterdir():
-        if not model.is_dir():
+    log_paths = [log for log in log_path.iterdir() if log.is_dir()]
+    for log in log_paths:
+        tensorboard_log = parse_tensorboard_log(log.as_posix())
+        assert len(tensorboard_log) != 0, f'Log {log} is empty.'
+        if len(tensorboard_log) < 150:
+            print(f'Log {log.parent.parent.stem}-{log.stem} is too short({len(tensorboard_log)} < 500).')
             continue
-        for log in model.iterdir():
-            tensorboard_log = parse_tensorboard_log(log.as_posix())
-            if tensorboard_log is not None:
-                logs.append(tensorboard_log)
-    return logs
+        logs.append(tensorboard_log)
+
+    if n_interpolations:
+        try:
+            logs = [log.reindex(np.arange(0, 600_000, 600_000 / n_interpolations), method='nearest') for log in logs]
+            if len(logs) == 0:
+                mean = None
+                stdev = None
+            else:
+                mean = pd.concat(logs, axis=0).groupby(level=0).mean().squeeze()
+                stdev = pd.concat(logs, axis=0).groupby(level=0).std().squeeze()
+        except Exception as e:
+            print(e)
+            mean = None
+            stdev = None
+    return logs, (mean, stdev)
 
 
-def collate_experiment_tensorboard_logs(experiment_name: str, n_interpolations: int = 30):
-    logs = get_experiment_tensorboard_logs(experiment_name)
+def collate_experiment_tensorboard_logs(path: str, n_interpolations: int = 30):
+    logs = get_experiment_tensorboard_logs(path)
     logs = [log.reindex(np.arange(0, 600_000, 600_000 / n_interpolations), method='nearest') for log in logs]
     print(len(logs))
     mean = pd.concat(logs, axis=0).groupby(level=0).mean().squeeze()
@@ -358,10 +456,44 @@ def collate_experiments_tensorboard_logs(experiments_path: Path = None, n_interp
     return results
 
 
-def plot_error_line_graph(mean, stdev, label, color='C0'):
+def plot_error_line_graph(ax: plt.Axes, mean: pd.Series, std: pd.Series,
+                          color: str = 'C0', label: str = None, **kwargs):
+    """ Plot a line graph with error bars.
+
+    :param ax plt.Axes: The axes to plot on.
+    :param mean pd.Series: The mean values.
+    :param std pd.Series: The standard deviation values.
+    :param color str: The color of the line.
+    :param label str: The label of the line.
+    :return plt.Axes: The axes.
+    """
+
     x = mean.index
-    plt.plot(x, mean, color=color, label=label)
-    plt.fill_between(x, mean - stdev, mean + stdev, alpha=0.3, color=color)
+    ax.plot(x, mean, color=color, label=label)
+    ax.fill_between(x, mean - std, mean + std, alpha=0.3, color=color, **kwargs)
+
+
+def plot_human_line(ax, phantom, target, n_interpolations=30):
+    """ Plot the human line.
+
+    :param ax plt.Axes: The axes to plot on.
+    :param phantom str: The phantom to plot.
+    :param target str: The target to plot.
+    :param n_interpolations int: The number of interpolations to use.
+    :return plt.Axes: The axes.
+    """
+    experiment_data = pd.read_csv(EVALUATION_PATH / 'results_2.csv')
+    human_data = experiment_data[(experiment_data['algorithm'] == 'human') & (experiment_data['phantom'] == phantom) & (experiment_data['target'] == target)]
+    mean = human_data['episode_length'].to_numpy()[0]
+    y_std = human_data['episode_length_std'].to_numpy()[0]
+
+    x = np.arange(0, 600_000, 600_000 / n_interpolations)
+    y = np.full(n_interpolations, mean)
+    ax.plot(x, y + y_std, linewidth=0.5, color='C0')
+    ax.plot(x, y - y_std, linewidth=0.5, color='C0')
+
+    ax.plot(x, y, label='Human', linestyle='--', color='C0', linewidth=1)
+    ax.fill_between(x, y - y_std, y + y_std, alpha=0.2)
 
 
 if __name__ == '__main__':
@@ -369,12 +501,14 @@ if __name__ == '__main__':
     # evaluate_model(EXPERIMENT_PATH / 'low_tort' / 'bca' / 'full', n_episodes=10)
     evaluate_models()
     # lcca_evaluation.mkdir(exist_ok=True)
-    collate_results()
+
+    collate_results(verbose=True)
     dataframe = aggregate_results()
+    print(dataframe)
     dataframe.to_csv(EVALUATION_PATH / 'results_2.csv', index=False)
+    exit()
     # make column names title case, without underscores
     dataframe.columns = [column.replace('_', ' ').title() for column in dataframe.columns]
-    print(dataframe.columns)
 
     columns = ['Phantom', 'Target', 'Algorithm', 'Force', 'Force Std', 'Path Length',
                'Path Length Std', 'Episode Length', 'Episode Length Std', 'Safety',
